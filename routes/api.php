@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\V1\API\Admin\AuthController;
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::group(['prefix' => 'admin'], function ($router) {
+    Route::post('login', [AuthController::class, 'login'])->name('admin.login');
+
+    Route::group(['middleware' => ['role:superadministrator', 'auth:api']], function () {
+        Route::get('me', [AuthController::class, 'me'])->name('admin.data');
+        Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
+    });
+
 });
