@@ -7,6 +7,7 @@ use App\Http\Requests\LoginAdminRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -25,11 +26,8 @@ class AuthController extends Controller
             return $this->unauthorized();
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('phone', $request->phone)->first();
         $token = JWTAuth::fromUser($user);
-        if (!$user->hasRole('superadministrator')) {
-            return $this->unauthorized();
-        }
 
         return $this->returnData(['user' => $user, 'token' => $token], 'LogedIn successfully');
     }
@@ -41,15 +39,25 @@ class AuthController extends Controller
         return $this->returnSuccessMessage('Successfully logged out');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function forgetPassword(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'phone' => 'required|exists:users,phone',
+            'password' => 'required|confirmed|string|min:6',
+            'password_confirmation' => 'required|string|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnValidationError(401, $validator->errors()->all());
+        }
+        $user = User::where('phone', $request->phone)->first();
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return $this->returnSuccessMessage(trans("api.Password_updated_successfully"));
     }
 
     /**

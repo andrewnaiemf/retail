@@ -29,7 +29,7 @@ class LoginAdminRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email|exists:users,email',
+            'phone' => 'required|exists:users,phone',
             'password' => 'required|string|min:6',
         ];
     }
