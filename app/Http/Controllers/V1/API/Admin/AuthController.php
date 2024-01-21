@@ -26,7 +26,12 @@ class AuthController extends Controller
             return $this->unauthorized();
         }
 
-        $user = User::where('phone', $request->phone)->first();
+        $user = User::where('phone_number', $request->phone_number)->first();
+
+        if (!$user) {
+            return $this->unauthorized();
+        }
+
         $token = JWTAuth::fromUser($user);
 
         return $this->returnData(['user' => $user, 'token' => $token], 'LogedIn successfully');
@@ -43,7 +48,7 @@ class AuthController extends Controller
     public function forgetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'phone' => 'required|exists:users,phone',
+            'phone_number' => 'required|exists:users,phone_number',
             'password' => 'required|confirmed|string|min:6',
             'password_confirmation' => 'required|string|min:6',
         ]);

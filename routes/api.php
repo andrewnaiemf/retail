@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\V1\API\Admin\AuthController;
+use App\Http\Controllers\V1\API\Admin\CustomerController;
+use App\Http\Controllers\V1\API\Admin\FetchingController;
 use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
@@ -24,12 +26,8 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::get('me', [AuthController::class, 'me'])->name('admin.data');
         Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 
+        Route::get('fetch', [FetchingController::class, 'fetchData'])->name('fetch');
 
-
-        Route::group(['prefix' => 'customers'], function () {
-            Route::get('fetch-data', [AuthController::class, 'fetch'])->name('customers.fetch-data');
-
-        });
     });
 
 });

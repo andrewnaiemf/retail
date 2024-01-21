@@ -4,21 +4,9 @@ namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class CustomerController extends Controller
 {
-
-    public function fetch(){
-        $response = Http::withHeaders([
-            'API-KEY' => env('API_KEY','4710f93567073fb98566ffafc'),
-        ])->get('https://www.qoyod.com/api/2.0/accounts');
-
-        $responseBody = $response->body();
-
-        
-    }
-
     /**
      * Display a listing of the resource.
      *

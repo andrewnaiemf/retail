@@ -21,10 +21,14 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
+        'organization',
         'email',
         'password',
-        'phone'
+        'phone_number',
+        'tax_number',
+        'status',
     ];
 
     /**
@@ -64,5 +68,15 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function billingAddress()
+    {
+        return $this->hasOne(BillingAddress::class, 'contact_id');
+    }
+
+    public function shippingAddress()
+    {
+        return $this->hasOne(ShippingAddress::class, 'contact_id');
     }
 }

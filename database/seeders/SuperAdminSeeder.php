@@ -20,7 +20,7 @@ class SuperAdminSeeder extends Seeder
             'name' => 'Super Admin',
             'email' => 'superadmin@gmail.com',
             'password' => bcrypt('123456'),
-            'phone' => '01274696869'
+            'phone_number' => '01274696869'
         ]);
 
 
