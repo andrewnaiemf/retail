@@ -28,6 +28,8 @@ Route::group(['prefix' => 'admin'], function ($router) {
 
         Route::get('fetch', [FetchingController::class, 'fetchData'])->name('fetch');
 
+        Route::resource('customers', CustomerController::class);
+
     });
 
 });

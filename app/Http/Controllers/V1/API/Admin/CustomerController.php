@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
 {
@@ -12,9 +14,14 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $per_page = $request->per_page ?? 10 ;
+        $customers = QueryBuilder::for(Customer::class)->with(['billingAddress','shippingAddress'])
+            ->allowedFilters(['name', 'status'])
+            ->simplePaginate($per_page);
+
+        return $this->returnData($customers);
     }
 
     /**
@@ -46,7 +53,13 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        //
+        $customer = Customer::findOrFail($id);
+
+        $invoices = $customer->invoices()->paginate(10);
+        $receipts = $customer->receipts()->paginate(10);
+
+
+        return $this->returnData(['customer' => $customer,'invoices' => $invoices,'receipts' => $receipts]);
     }
 
     /**
