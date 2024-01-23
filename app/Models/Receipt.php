@@ -20,6 +20,20 @@ class Receipt extends Model
         'account_id',
     ];
 
+
+    public function toArray()
+    {
+        $invoice = parent::toArray();
+        $invoice = array_merge($invoice, ['un_allocate_amount' => $this->getUnAllocateAmountAttribute()]);
+        return $invoice;
+    }
+
+    public function getUnAllocateAmountAttribute()
+    {
+        $un_allocate_amount = $this->amount - $this->allocates()->sum('amount');
+        return $un_allocate_amount;
+    }
+
     public function contact()
     {
         return $this->belongsTo(Customer::class, 'contact_id');
