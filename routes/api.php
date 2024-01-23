@@ -3,7 +3,7 @@
 use App\Http\Controllers\V1\API\Admin\AuthController;
 use App\Http\Controllers\V1\API\Admin\CustomerController;
 use App\Http\Controllers\V1\API\Admin\FetchingController;
-use App\Models\Role;
+use App\Http\Controllers\V1\API\Admin\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,6 +29,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::get('fetch', [FetchingController::class, 'fetchData'])->name('fetch');
 
         Route::resource('customers', CustomerController::class);
+        Route::resource('invoices', InvoiceController::class);
 
     });
 

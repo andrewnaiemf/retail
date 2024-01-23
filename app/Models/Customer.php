@@ -3,11 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laratrust\Traits\LaratrustUserTrait;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
     use HasFactory;
+    use LaratrustUserTrait;
+
+    protected $table = 'users';
 
     protected $fillable = [
         'id',
@@ -19,6 +23,8 @@ class Customer extends Model
         'tax_number',
         'status',
     ];
+
+    protected $hidden = ['password'];
 
     public function toArray()
     {
@@ -84,5 +90,11 @@ class Customer extends Model
 
     public function receipts(){
         return $this->hasMany(Receipt::class, 'contact_id');
+    }
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

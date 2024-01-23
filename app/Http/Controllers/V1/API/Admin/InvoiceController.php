@@ -3,26 +3,19 @@
 namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
-use App\Models\User;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\QueryBuilder;
 
-class CustomerController extends Controller
+class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $per_page = $request->per_page ?? 10 ;
-        $customers = QueryBuilder::for(Customer::class)->with(['billingAddress','shippingAddress'])
-            ->allowedFilters(['name', 'status'])->whereRoleIs('user')
-            ->simplePaginate($per_page);
-
-        return $this->returnData($customers);
+        //
     }
 
     /**
@@ -54,17 +47,9 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::whereRoleIs('user')->find($id);
+        $invoice = Invoice::with(['payments', 'inventory', 'contact'])->findOrFail($id);
 
-        if (!$customer) {
-            return $this->returnError(422, 'invalid customer id');
-        }
-
-        $invoices = $customer->invoices()->paginate(10);
-        $receipts = $customer->receipts()->paginate(10);
-
-
-        return $this->returnData(['customer' => $customer,'invoices' => $invoices,'receipts' => $receipts]);
+        return $this->returnData($invoice);
     }
 
     /**

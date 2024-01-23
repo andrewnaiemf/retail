@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use App\Traits\GeneralTrait;
 use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
@@ -19,9 +20,9 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException || $exception instanceof MethodNotAllowedHttpException) {
+        if ($exception instanceof HttpException ||$exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException || $exception instanceof MethodNotAllowedHttpException) {
             if (  $request->is('api/*')  ) {
-                if ($exception->getMessage() == 'Unauthenticated'){
+                if ($exception->getMessage() == 'Unauthenticated' || $exception->getStatusCode() == 403){
                     return $this->unauthorized();
                 }
                 return $this->returnError( 404, trans('auth.Not_found'));

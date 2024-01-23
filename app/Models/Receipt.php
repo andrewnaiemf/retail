@@ -22,7 +22,7 @@ class Receipt extends Model
 
     public function contact()
     {
-        return $this->belongsTo(User::class, 'contact_id');
+        return $this->belongsTo(Customer::class, 'contact_id');
     }
 
     public function account()

@@ -10,6 +10,6 @@ class Tax extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'name', 'rate'
     ];
 }

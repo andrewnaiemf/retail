@@ -26,9 +26,25 @@ class Invoice extends Model
         'payment_method',
     ];
 
-    public function contact()
+    public function toArray()
     {
-        return $this->belongsTo(User::class, 'contact_id');
+        $invoice = parent::toArray();
+        $invoice = array_merge($invoice, ['owner' => $this->getOwnerAttribute()]);
+        return $invoice;
+    }
+
+
+
+    public function getOwnerAttribute() //owner
+    {
+        $owner = User::whereRoleIs('administrator')->with('shippingAddress')->first();
+        $owner->commercial_registration_number = '1010839238';
+        return $owner;
+    }
+
+    public function contact() //customer
+    {
+        return $this->belongsTo(Customer::class, 'contact_id');
     }
 
     public function inventory()

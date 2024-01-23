@@ -70,11 +70,6 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function billingAddress()
-    {
-        return $this->hasOne(BillingAddress::class, 'contact_id');
-    }
-
     public function shippingAddress()
     {
         return $this->hasOne(ShippingAddress::class, 'contact_id');

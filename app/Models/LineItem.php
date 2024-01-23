@@ -21,6 +21,16 @@ class LineItem extends Model
         'tax_percent',
     ];
 
+    public function toArray()
+    {
+        $lineItem = parent::toArray();
+        $name = 'name_' . app()->getLocale();
+        $lineItemArray = array_merge($lineItem,[
+            'name' => $this->product->$name ?? '',
+        ]);
+        return $lineItemArray;
+    }
+
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);

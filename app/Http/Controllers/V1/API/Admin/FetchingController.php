@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Account;
 use App\Models\Allocation;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Invoice;
 use App\Models\LineItem;
@@ -112,9 +113,8 @@ class FetchingController extends Controller
             $customer_data = (array)$customer_data;
 
             $customer_id = $customer_data['id'];
-            unset($customer_data['id']);
-
-            $customer = User::updateOrCreate(['id' => $customer_id], $customer_data);
+            $customer_data['password'] = bcrypt($customer_data['phone_number']);
+            $customer = Customer::updateOrCreate(['id' => $customer_id], $customer_data);
 
 
             $this->updateOrCreateAddress($customer, 'shippingAddress', $customer_data['shipping_address']);
