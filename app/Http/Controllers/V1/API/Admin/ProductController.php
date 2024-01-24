@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductsForCustomerRequest;
 use App\Models\Customer;
 use App\Models\Product;
+use App\Filter\FiltersProduct as FiltersProduct;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller
 {
@@ -15,9 +18,17 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $per_page = $request->header('per_page') ?? 10;
+
+        $products = QueryBuilder::for(Product::class)
+            ->allowedFilters(
+                AllowedFilter::custom('name', new FiltersProduct)
+            )->with(['category'])
+            ->simplePaginate($per_page);
+
+        return $this->returnData($products);
     }
 
     /**
@@ -49,7 +60,9 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $product = Product::with(['category'])->findOrFail($id);
+
+        return $this->returnData($product);
     }
 
     /**
@@ -77,7 +90,7 @@ class ProductController extends Controller
         if ( !$customer) {
             return $this->returnError(422, 'invalid customer id');
         }
-        
+
         foreach ($request->products as $productData) {
 
             $productId = $productData['id'];

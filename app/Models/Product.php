@@ -32,6 +32,9 @@ class Product extends Model
         'pos_product'
     ];
 
+    public function category(){
+        return $this->belongsTo(Category::class);
+    }
 
     public function inventories()
     {
