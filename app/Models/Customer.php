@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Customer extends Authenticatable
+class Customer extends Authenticatable  implements JWTSubject
 {
     use HasFactory;
     use LaratrustUserTrait;
+    use Notifiable;
 
     protected $table = 'users';
 
@@ -41,6 +44,27 @@ class Customer extends Authenticatable
     }
 
     protected $append = ['balance', 'overdue', 'total_invoices_count', 'total_invoices_amount', 'tota_out_standing'];
+
+
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 
     public function getBalanceAttribute()
     {

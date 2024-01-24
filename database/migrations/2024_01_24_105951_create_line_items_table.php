@@ -15,6 +15,7 @@ class CreateLineItemsTable extends Migration
     {
         Schema::create('line_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_id')->nullable()->constrained();
             $table->foreignId('invoice_id')->constrained();
             $table->foreignId('product_id')->constrained();
             $table->text('description')->nullable();

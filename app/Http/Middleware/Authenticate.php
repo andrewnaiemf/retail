@@ -2,10 +2,13 @@
 
 namespace App\Http\Middleware;
 
+use App\Traits\GeneralTrait;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class Authenticate extends Middleware
 {
+    use GeneralTrait;
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
@@ -18,4 +21,10 @@ class Authenticate extends Middleware
             return route('admin.login');
         }
     }
+
+    protected function unauthenticated($request, array $guards)
+    {
+        return $this->unauthorized();
+    }
+
 }

@@ -11,6 +11,7 @@ class LineItem extends Model
 
     protected $fillable = [
         'id',
+        'order_id',
         'invoice_id',
         'product_id',
         'description',
@@ -39,5 +40,10 @@ class LineItem extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\V1\API\Admin;
+namespace App\Http\Controllers\V1\API\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginAdminRequest;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,11 +23,11 @@ class AuthController extends Controller
     {
         $valid_data = $request->validated();
 
-        if(!Auth::attempt($valid_data)) {
+        if(!Auth::guard('customer')->attempt($valid_data)) {
             return $this->unauthorized();
         }
 
-        $user = User::where('phone_number', $request->phone_number)->whereRoleIs(['superadministrator', 'administrator'])->first();
+        $user = Customer::where('phone_number', $request->phone_number)->whereRoleIs('user')->first();
 
         if (!$user) {
             return $this->unauthorized();
@@ -39,7 +40,8 @@ class AuthController extends Controller
 
     public function logout()
     {
-        Auth::logout();
+
+        Auth::guard('customer')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
     }
@@ -56,7 +58,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return $this->returnValidationError(401, $validator->errors()->all());
         }
-        $user = User::where('phone_number', $request->phone_number)->first();
+        $user = Customer::where('phone_number', $request->phone_number)->first();
 
         $user->update([
             'password' => Hash::make($request->password),

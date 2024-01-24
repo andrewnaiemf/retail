@@ -7,6 +7,9 @@ use App\Http\Controllers\V1\API\Admin\FetchingController;
 use App\Http\Controllers\V1\API\Admin\InvoiceController;
 use App\Http\Controllers\V1\API\Admin\ProductController;
 use App\Http\Controllers\V1\API\Admin\ReceiptController;
+use App\Http\Controllers\V1\API\Customer\AuthController as CustomerAuthController;
+use App\Http\Controllers\V1\API\Customer\CustomerController as CustomerCustomerController;
+use App\Http\Controllers\V1\API\Customer\OrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +42,34 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::resource('products', ProductController::class);
 
         Route::resource('drivers', DriverController::class);
+
+
+    });
+
+});
+
+Route::group(['prefix' => 'user'], function () {
+    Route::post('login', [CustomerAuthController::class, 'login'])->name('customer.login');
+    Route::post('forget-password', [CustomerAuthController::class, 'forgetPassword'])->name('customer.forgetPassword');
+
+    Route::group(['middleware' => ['role:user', 'auth:customer']], function () {
+
+
+
+        Route::get('me', [CustomerAuthController::class, 'me'])->name('customer.data');
+        Route::post('logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
+
+
+        Route::resource('customers', CustomerCustomerController::class)->except(['show'])->names([
+            'index' => 'customer.customers.index',
+            'create' => 'customer.customers.create',
+            'store' => 'customer.customers.store',
+            'edit' => 'customer.customers.edit',
+            'update' => 'customer.customers.update',
+            'destroy' => 'customer.customers.destroy',
+        ]);
+
+        Route::resource('orders', OrderController::class);
 
 
     });
