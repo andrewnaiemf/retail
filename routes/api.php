@@ -4,6 +4,7 @@ use App\Http\Controllers\V1\API\Admin\AuthController;
 use App\Http\Controllers\V1\API\Admin\CustomerController;
 use App\Http\Controllers\V1\API\Admin\FetchingController;
 use App\Http\Controllers\V1\API\Admin\InvoiceController;
+use App\Http\Controllers\V1\API\Admin\ProductController;
 use App\Http\Controllers\V1\API\Admin\ReceiptController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,6 +33,8 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::resource('customers', CustomerController::class);
         Route::resource('invoices', InvoiceController::class);
         Route::resource('receipts', ReceiptController::class);
+
+        Route::put('customer/products', [ProductController::class, 'storeProductsForCustomer']);
 
     });
 

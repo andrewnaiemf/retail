@@ -20,12 +20,17 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        if ($exception instanceof HttpException ||$exception instanceof ModelNotFoundException || $exception instanceof NotFoundHttpException || $exception instanceof MethodNotAllowedHttpException) {
+
+        if ($exception instanceof HttpException || $exception instanceof NotFoundHttpException || $exception instanceof MethodNotAllowedHttpException) {
             if (  $request->is('api/*')  ) {
-                if ($exception->getMessage() == 'Unauthenticated' || $exception->getStatusCode() == 403){
+                
+                if ($exception instanceof ModelNotFoundException) {
+                    return $this->returnError( 404, trans('auth.Not_found'));
+                }
+
+                if ($exception->getMessage() == 'Unauthenticated' || ( $exception->getStatusCode() == 403)){
                     return $this->unauthorized();
                 }
-                return $this->returnError( 404, trans('auth.Not_found'));
             }
         }
 

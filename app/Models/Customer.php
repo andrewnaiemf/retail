@@ -97,4 +97,9 @@ class Customer extends Authenticatable
     {
         return $this->belongsTo(User::class);
     }
+
+    public function products()
+    {
+        return $this->belongsToMany(Product::class)->withPivot('price');
+    }
 }
