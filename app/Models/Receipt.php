@@ -23,8 +23,16 @@ class Receipt extends Model
 
     public function toArray()
     {
+        $from_location = 'Main Branch';
+        
+        if (app()->getLocale() == 'ar') {
+            $from_location = 'المركز الرئيسي';
+        }
         $invoice = parent::toArray();
-        $invoice = array_merge($invoice, ['un_allocate_amount' => $this->getUnAllocateAmountAttribute()]);
+        $invoice = array_merge($invoice, [
+            'un_allocate_amount' => $this->getUnAllocateAmountAttribute(),
+            'from_location' => $from_location
+        ]);
         return $invoice;
     }
 
