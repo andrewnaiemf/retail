@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\V1\API\Admin\AuthController;
 use App\Http\Controllers\V1\API\Admin\CustomerController;
+use App\Http\Controllers\V1\API\Admin\DriverController;
 use App\Http\Controllers\V1\API\Admin\FetchingController;
 use App\Http\Controllers\V1\API\Admin\InvoiceController;
 use App\Http\Controllers\V1\API\Admin\ProductController;
@@ -35,6 +36,9 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::resource('receipts', ReceiptController::class);
 
         Route::put('customer/products', [ProductController::class, 'storeProductsForCustomer']);
+
+        Route::resource('drivers', DriverController::class);
+
 
     });
 

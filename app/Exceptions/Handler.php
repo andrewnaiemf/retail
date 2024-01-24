@@ -23,7 +23,7 @@ class Handler extends ExceptionHandler
 
         if ($exception instanceof HttpException || $exception instanceof NotFoundHttpException || $exception instanceof MethodNotAllowedHttpException) {
             if (  $request->is('api/*')  ) {
-                
+
                 if ($exception instanceof ModelNotFoundException) {
                     return $this->returnError( 404, trans('auth.Not_found'));
                 }
@@ -34,7 +34,7 @@ class Handler extends ExceptionHandler
             }
         }
 
-        return parent::render($request, $exception);
+        return $this->returnError( 404, $exception->getMessage());
     }
 
     /**

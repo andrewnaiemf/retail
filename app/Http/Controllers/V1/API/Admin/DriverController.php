@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
-use App\Models\User;
+use App\Http\Requests\DriverRequest;
+use App\Models\Driver;
+use App\Models\DriverPassword;
+use App\Models\Role;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\QueryBuilder;
 
-class CustomerController extends Controller
+class DriverController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,11 +19,10 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->header('per_page') ?? 10;
-        $customers = QueryBuilder::for(Customer::class)->with(['billingAddress','shippingAddress'])
-            ->allowedFilters(['name', 'status'])->whereRoleIs('user')
-            ->simplePaginate($per_page);
 
-        return $this->returnData($customers);
+        $drivers = Driver::whereRoleIs('driver')->simplePaginate($per_page);
+
+        return $this->returnData($drivers);
     }
 
     /**
@@ -38,12 +38,25 @@ class CustomerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\DriverRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(DriverRequest $request)
     {
-        //
+        $role = Role::where('name', 'driver')->first();
+        $password =  $request['password'];
+        $request['password'] = bcrypt($password);
+
+        $driver = Driver::updateOrCreate(['phone_number' => $request['phone_number']], $request->all());
+
+        DriverPassword::updateOrCreate(['driver_id' => $request['driver_id']],['driver_id' => $driver->id,'password' => $password]);
+
+        $driver->attachRole($role);
+
+        $driver->attachPermissions($role->permissions);
+
+        return $this->returnSuccessMessage('driver stored successfully');
+
     }
 
     /**
@@ -54,17 +67,10 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::whereRoleIs('user')->find($id);
 
-        if (!$customer) {
-            return $this->returnError(422, 'invalid customer id');
-        }
+        $driver = Driver::whereRoleIs('driver')->findOrFail($id);
 
-        $invoices = $customer->invoices()->paginate(10);
-        $receipts = $customer->receipts()->paginate(10);
-
-
-        return $this->returnData(['customer' => $customer,'invoices' => $invoices,'receipts' => $receipts]);
+        return $this->returnData($driver);
     }
 
     /**
