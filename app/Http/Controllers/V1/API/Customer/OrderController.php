@@ -63,8 +63,8 @@ class OrderController extends Controller
             'customer_id' => $customer->id,
             'inventory_id' => 1,
             'reference' => $reference,
-            'status' => 'Billed',
-            'note' => $request->note,
+            'status' => 'Draft',
+            'notes' => $request->notes,
             'created_at' =>now()
         ]);
 

@@ -11,7 +11,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'customer_id', 'reference', 'status', 'inventory_id', 'notes', 'terms_conditions',
+        'customer_id', 'driver_id', 'reference', 'status', 'inventory_id', 'notes', 'terms_conditions',
     ];
 
     public function toArray()
@@ -44,5 +44,9 @@ class Order extends Model
     public function orderItems()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function driver(){
+        return $this->belongsTo(Driver::class, 'driver_id');
     }
 }

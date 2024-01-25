@@ -45,6 +45,8 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::resource('drivers', DriverController::class);
 
         Route::resource('orders', AdminOrderController::class);
+        Route::get('orders/{order_id}/{status}', [AdminOrderController::class, 'updateStatus']);
+        Route::post('orders/{order_id}/assign-driver', [AdminOrderController::class ,'assignDriver']);
 
 
     });

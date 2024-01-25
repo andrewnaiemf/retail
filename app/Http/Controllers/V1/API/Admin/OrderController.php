@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateOrderRequest;
+use App\Models\Driver;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -93,6 +94,37 @@ class OrderController extends Controller
         }
 
         return $this->returnSuccessMessage('order updated successfully');
+    }
+
+    public function updateStatus(Request $request, $order_id, $status){
+
+        $order = Order::where('status','Draft')->findOrFail($order_id)->first();
+
+        $order->update([
+            'status' => $status
+        ]);
+
+        return $this->returnSuccessMessage('order ' . $status . ' Successfully');
+    }
+
+    public function assignDriver(Request $request , $order_id){
+
+        $request->validate([
+            'driver_id' => 'required|exists:users,id',
+
+        ]);
+
+        $driver = Driver::findOrFail($request->driver_id);
+
+        $order = Order::where('status','Draft')->findOrFail($order_id)->first();
+
+        $order->driver()->associate($driver);
+        
+        $order->save();
+
+        return $this->returnSuccessMessage('driver attached to order successfully');
+
+
     }
 
     /**
