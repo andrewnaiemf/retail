@@ -7,6 +7,7 @@ use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Driver;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderController extends Controller
 {
@@ -15,9 +16,14 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $per_page = $request->header('per_page') ?? 10;
+        $orders = QueryBuilder::for(Order::class)->with(['orderItems','driver'])
+            ->allowedFilters(['status'])
+            ->simplePaginate($per_page);
+
+        return $this->returnData($orders);
     }
 
     /**
@@ -49,7 +55,9 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        $order = Order::with(['orderItems','driver'])->findOrFail($id);
+
+        return $this->returnData($order);
     }
 
     /**
@@ -119,7 +127,7 @@ class OrderController extends Controller
         $order = Order::where('status','Draft')->findOrFail($order_id)->first();
 
         $order->driver()->associate($driver);
-        
+
         $order->save();
 
         return $this->returnSuccessMessage('driver attached to order successfully');
