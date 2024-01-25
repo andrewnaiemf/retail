@@ -37,7 +37,7 @@ class DriverRequest extends FormRequest
     public function failedValidation(Validator $validator)
     {
         if ($validator->fails()) {
-            $this->returnValidationError(401,$validator->errors()->all());
+            $this->returnValidationError(422,$validator->errors()->all());
         }
     }
 }

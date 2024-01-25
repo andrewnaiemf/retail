@@ -5,6 +5,7 @@ use App\Http\Controllers\V1\API\Admin\CustomerController;
 use App\Http\Controllers\V1\API\Admin\DriverController;
 use App\Http\Controllers\V1\API\Admin\FetchingController;
 use App\Http\Controllers\V1\API\Admin\InvoiceController;
+use App\Http\Controllers\V1\API\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\V1\API\Admin\ProductController;
 use App\Http\Controllers\V1\API\Admin\ReceiptController;
 use App\Http\Controllers\V1\API\Customer\AuthController as CustomerAuthController;
@@ -43,6 +44,8 @@ Route::group(['prefix' => 'admin'], function ($router) {
 
         Route::resource('drivers', DriverController::class);
 
+        Route::resource('orders', AdminOrderController::class);
+
 
     });
 
@@ -69,7 +72,14 @@ Route::group(['prefix' => 'user'], function () {
             'destroy' => 'customer.customers.destroy',
         ]);
 
-        Route::resource('orders', OrderController::class);
+        Route::resource('orders', OrderController::class)->except(['show'])->names([
+            'index' => 'customer.orders.index',
+            'create' => 'customer.orders.create',
+            'store' => 'customer.orders.store',
+            'edit' => 'customer.orders.edit',
+            'update' => 'customer.orders.update',
+            'destroy' => 'customer.orders.destroy',
+        ]);
 
 
     });

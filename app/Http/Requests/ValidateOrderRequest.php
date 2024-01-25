@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidateStock;
 use App\Traits\GeneralTrait;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
 
-class StoreProductsForCustomerRequest extends FormRequest
+class ValidateOrderRequest extends FormRequest
 {
     use GeneralTrait;
 
@@ -28,12 +31,16 @@ class StoreProductsForCustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer' => 'required|exists:users,id',
-            'products' => 'required|array',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.price' => 'required|numeric',
+            'line_items' => 'required|array',
+            'line_items.*.product_id' => [
+                'required',
+                'exists:products,id',
+                new ValidateStock(),
+            ],
+            'line_items.*.quantity' => 'required|numeric|min:1',
         ];
     }
+
 
     public function failedValidation(Validator $validator)
     {
