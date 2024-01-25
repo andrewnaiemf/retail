@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\API\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -14,7 +15,8 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::with('orderItems')->get();
+        return $this->returnData($orders);
     }
 
     /**
@@ -35,7 +37,41 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $orderData = $request->input('order');
+        $customer = auth('customer')->user();
+        $lineItems = $orderData['line_items'];
+        $modifiedLineItems = [];
+
+        foreach ($lineItems as $lineItem) {
+            $product = $customer->products->where('id', $lineItem['product_id'])->first();
+            $unit_price = $product->pivot->price;
+            // Add the modified line item to the array
+            $modifiedLineItem = $lineItem;
+            $modifiedLineItem['unit_price'] = $unit_price;
+            $modifiedLineItem['tax_percent'] = 15;
+            $modifiedLineItems[] = $modifiedLineItem;
+        }
+        $last_order_id = 1;
+        $last_order = Order::orderBy('id','desc')->first();
+        if ($last_order) {
+            $last_order_id = $last_order->id + 1 ;
+        }
+
+        $reference = 'order' . $last_order_id;
+
+        $order = Order::create([
+            'customer_id' => $customer->id,
+            'inventory_id' => 1,
+            'reference' => $reference,
+            'status' => 'Billed',
+            'note' => $request->note,
+            'created_at' =>now()
+        ]);
+
+
+        $order->orderItems()->createMany($modifiedLineItems);
+
+        return response()->json(['message' => 'Order created successfully']);
     }
 
     /**
