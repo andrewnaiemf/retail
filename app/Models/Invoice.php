@@ -29,7 +29,7 @@ class Invoice extends Model
     public function toArray()
     {
         $invoice = parent::toArray();
-        $invoice = array_merge($invoice, ['owner' => $this->getOwnerAttribute()]);
+        $invoice = array_merge($invoice, ['type' => 'tax_invoice', 'owner' => $this->getOwnerAttribute()]);
         return $invoice;
     }
 

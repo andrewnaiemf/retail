@@ -208,12 +208,12 @@ class FetchingController extends Controller
 
     public function updateOrCreateProducts($qoyoud_data)
     {
-
         foreach ($qoyoud_data as $product_data) {
             $product_data = (array)$product_data;
-            $product = Product::updateOrCreate(['id' => $product_data['id']], $product_data);
-
-            $this->attachInventory($product, $product_data);
+            if ($product_data['type'] == 'Product') {
+                $product = Product::updateOrCreate(['id' => $product_data['id']], $product_data);
+                $this->attachInventory($product, $product_data);
+            }
         }
     }
 
