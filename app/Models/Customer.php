@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Customer extends Authenticatable  implements JWTSubject
+class Customer extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use LaratrustUserTrait;
@@ -33,17 +33,19 @@ class Customer extends Authenticatable  implements JWTSubject
     {
 
         $userArray = parent::toArray();
-        $userArray = array_merge($userArray,[
-            'balance' => $this->balance,
-            'overdue' => $this->overdue,
+        $userArray = array_merge($userArray, [
+            'closing_balance' => (float)$this->balance,
+            'overdue' => round($this->overdue, 2),
             'total_invoices_count' => $this->total_invoices_count,
-            'total_invoices_amount' => $this->total_invoices_amount,
-            'total_out_standing' => $this->total_out_standing
+            'total_invoices_amount' => (float)$this->total_invoices_amount,
+            'total_out_standing' => (float)$this->total_out_standing,
+            'total_paid' => (float)$this->total_out_standing - round($this->overdue, 2),
+            'branches' => $this->branches
         ]);
         return $userArray;
     }
 
-    protected $append = ['balance', 'overdue', 'total_invoices_count', 'total_invoices_amount', 'tota_out_standing'];
+    protected $append = ['balance', 'overdue', 'total_invoices_count', 'total_invoices_amount', 'tota_out_standing', 'total_paid', 'branches'];
 
 
     /**
@@ -98,9 +100,15 @@ class Customer extends Authenticatable  implements JWTSubject
         return $amount;
     }
 
+    public function getBranchesAttribute()
+    {
+        $branches = User::where('tax_number', $this->tax_number)->get();
+        return  $branches;
+    }
+
     public function billingAddress()
     {
-        return $this->hasOne(BillingAddress::class ,'contact_id');
+        return $this->hasOne(BillingAddress::class, 'contact_id');
     }
 
     public function shippingAddress()
@@ -108,11 +116,13 @@ class Customer extends Authenticatable  implements JWTSubject
         return $this->hasOne(ShippingAddress::class, 'contact_id');
     }
 
-    public function invoices(){
+    public function invoices()
+    {
         return $this->hasMany(Invoice::class, 'contact_id');
     }
 
-    public function receipts(){
+    public function receipts()
+    {
         return $this->hasMany(Receipt::class, 'contact_id');
     }
 
@@ -125,5 +135,9 @@ class Customer extends Authenticatable  implements JWTSubject
     public function products()
     {
         return $this->belongsToMany(Product::class)->withPivot('price');
+    }
+
+    public function orders(){
+        return $this->hasMany(Order::class);
     }
 }

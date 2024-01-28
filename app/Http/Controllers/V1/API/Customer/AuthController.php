@@ -27,7 +27,9 @@ class AuthController extends Controller
             return $this->unauthorized();
         }
 
-        $user = Customer::where('phone_number', $request->phone_number)->whereRoleIs('user')->first();
+        $user = Customer::where('phone_number', $request->phone_number)->whereRoleIs('user')->with(['orders' => function ($query) {
+            $query->orderBy('created_at', 'desc');
+        }])->first();
 
         if (!$user) {
             return $this->unauthorized();
