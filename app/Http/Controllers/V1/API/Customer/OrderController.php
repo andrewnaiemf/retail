@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\API\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
@@ -35,43 +36,59 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ValidateOrderRequest $request)
     {
         $orderData = $request->input('order');
         $customer = auth('customer')->user();
         $lineItems = $orderData['line_items'];
+        $modifiedLineItems = $this->modifyLineItems($customer, $lineItems);
+
+        $reference = $this->generateOrderReference();
+        $order = $this->createOrder($customer, $reference, $request);
+
+        $this->createOrderItems($order, $modifiedLineItems);
+
+        return response()->json(['message' => 'Order created successfully']);
+    }
+
+    private function modifyLineItems($customer, $lineItems)
+    {
         $modifiedLineItems = [];
 
         foreach ($lineItems as $lineItem) {
             $product = $customer->products->where('id', $lineItem['product_id'])->first();
-            $unit_price = $product->pivot->price;
-            // Add the modified line item to the array
+            $unitPrice = $product->pivot->price;
+
             $modifiedLineItem = $lineItem;
-            $modifiedLineItem['unit_price'] = $unit_price;
+            $modifiedLineItem['unit_price'] = $unitPrice;
             $modifiedLineItem['tax_percent'] = 15;
             $modifiedLineItems[] = $modifiedLineItem;
         }
-        $last_order_id = 1;
-        $last_order = Order::orderBy('id','desc')->first();
-        if ($last_order) {
-            $last_order_id = $last_order->id + 1 ;
-        }
 
-        $reference = 'order' . $last_order_id;
+        return $modifiedLineItems;
+    }
 
-        $order = Order::create([
+    private function generateOrderReference()
+    {
+        $lastOrderId = Order::max('id') ?? 0;
+        return 'order' . ($lastOrderId + 1);
+    }
+
+    private function createOrder($customer, $reference, $request)
+    {
+        return Order::create([
             'customer_id' => $customer->id,
             'inventory_id' => 1,
             'reference' => $reference,
             'status' => 'Draft',
             'notes' => $request->notes,
-            'created_at' =>now()
+            'created_at' => now(),
         ]);
+    }
 
-
+    private function createOrderItems($order, $modifiedLineItems)
+    {
         $order->orderItems()->createMany($modifiedLineItems);
-
-        return response()->json(['message' => 'Order created successfully']);
     }
 
     /**
