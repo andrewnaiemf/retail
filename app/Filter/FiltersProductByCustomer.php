@@ -1,7 +1,6 @@
 <?php
 namespace App\Filter;
 
-use App\Models\Customer;
 use Spatie\QueryBuilder\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 

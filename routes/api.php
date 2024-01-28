@@ -8,6 +8,7 @@ use App\Http\Controllers\V1\API\Admin\InvoiceController;
 use App\Http\Controllers\V1\API\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\V1\API\Admin\ProductController;
 use App\Http\Controllers\V1\API\Admin\ReceiptController;
+use App\Http\Controllers\V1\API\Customer\AccountStatementController;
 use App\Http\Controllers\V1\API\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\V1\API\Customer\CustomerController as CustomerCustomerController;
 use App\Http\Controllers\V1\API\Customer\InvoiceController as CustomerInvoiceController;
@@ -116,6 +117,8 @@ Route::group(['prefix' => 'user'], function () {
             'update' => 'customer.receipts.update',
             'destroy' => 'customer.receipts.destroy',
         ]);
+
+        Route::get('account-statement', [AccountStatementController::class, 'index']);
 
 
     });

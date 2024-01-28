@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use App\Filter\StartsBetweenFilter;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
+use Spatie\QueryBuilder\AllowedFilter;
 
 class Receipt extends Model
 {
