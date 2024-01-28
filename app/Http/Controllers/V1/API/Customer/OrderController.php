@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\V1\API\Customer;
 
+use App\Filter\FiltersOrders;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class OrderController extends Controller
 {
@@ -14,9 +17,15 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with('orderItems')->get();
+        $per_page = $request->header('per_page') ?? 10;
+        $orders = QueryBuilder::for(Order::class)->with(['orderItems','driver'])
+            ->allowedFilters(
+                AllowedFilter::custom('status', new FiltersOrders)
+            )
+            ->simplePaginate($per_page);
+
         return $this->returnData($orders);
     }
 

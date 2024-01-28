@@ -10,8 +10,10 @@ use App\Http\Controllers\V1\API\Admin\ProductController;
 use App\Http\Controllers\V1\API\Admin\ReceiptController;
 use App\Http\Controllers\V1\API\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\V1\API\Customer\CustomerController as CustomerCustomerController;
+use App\Http\Controllers\V1\API\Customer\InvoiceController as CustomerInvoiceController;
 use App\Http\Controllers\V1\API\Customer\OrderController;
 use App\Http\Controllers\V1\API\Customer\ProductController as CustomerProductController;
+use App\Http\Controllers\V1\API\Customer\ReceiptController as CustomerReceiptController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -92,6 +94,27 @@ Route::group(['prefix' => 'user'], function () {
             'edit' => 'customer.products.edit',
             'update' => 'customer.products.update',
             'destroy' => 'customer.products.destroy',
+        ]);
+
+
+        Route::resource('invoices', CustomerInvoiceController::class)->names([
+            'index' => 'customer.invoices.index',
+            'show' => 'customer.invoices.show',
+            'create' => 'customer.invoices.create',
+            'store' => 'customer.invoices.store',
+            'edit' => 'customer.invoices.edit',
+            'update' => 'customer.invoices.update',
+            'destroy' => 'customer.invoices.destroy',
+        ]);
+
+        Route::resource('receipts', CustomerReceiptController::class)->names([
+            'index' => 'customer.receipts.index',
+            'show' => 'customer.receipts.show',
+            'create' => 'customer.receipts.create',
+            'store' => 'customer.receipts.store',
+            'edit' => 'customer.receipts.edit',
+            'update' => 'customer.receipts.update',
+            'destroy' => 'customer.receipts.destroy',
         ]);
 
 
