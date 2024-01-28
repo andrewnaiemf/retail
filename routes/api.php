@@ -11,6 +11,7 @@ use App\Http\Controllers\V1\API\Admin\ReceiptController;
 use App\Http\Controllers\V1\API\Customer\AuthController as CustomerAuthController;
 use App\Http\Controllers\V1\API\Customer\CustomerController as CustomerCustomerController;
 use App\Http\Controllers\V1\API\Customer\OrderController;
+use App\Http\Controllers\V1\API\Customer\ProductController as CustomerProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,6 +82,16 @@ Route::group(['prefix' => 'user'], function () {
             'edit' => 'customer.orders.edit',
             'update' => 'customer.orders.update',
             'destroy' => 'customer.orders.destroy',
+        ]);
+
+        Route::resource('products', CustomerProductController::class)->names([
+            'index' => 'customer.products.index',
+            'show' => 'customer.products.show',
+            'create' => 'customer.products.create',
+            'store' => 'customer.products.store',
+            'edit' => 'customer.products.edit',
+            'update' => 'customer.products.update',
+            'destroy' => 'customer.products.destroy',
         ]);
 
 

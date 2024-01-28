@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Filter\FiltersProduct;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Str;
 
 class Customer extends Authenticatable implements JWTSubject
 {
@@ -31,22 +33,27 @@ class Customer extends Authenticatable implements JWTSubject
 
     public function toArray()
     {
-
+        $currentUrl = request()->url();
         $userArray = parent::toArray();
-        $userArray = array_merge($userArray, [
-            'closing_balance' => (float)$this->balance,
-            'overdue' => round($this->overdue, 2),
-            'total_invoices_count' => $this->total_invoices_count,
-            'total_invoices_amount' => (float)$this->total_invoices_amount,
-            'total_out_standing' => (float)$this->total_out_standing,
-            'total_paid' => (float)$this->total_out_standing - round($this->overdue, 2),
-            'branches' => $this->branches
-        ]);
+
+        if (!Str::contains($currentUrl, 'products')) {
+            $userArray = array_merge($userArray, [
+                'closing_balance' => (float)$this->balance,
+                'overdue' => round($this->overdue, 2),
+                'total_invoices_count' => $this->total_invoices_count,
+                'total_invoices_amount' => (float)$this->total_invoices_amount,
+                'total_out_standing' => (float)$this->total_out_standing,
+                'total_paid' => (float)$this->total_out_standing - round($this->overdue, 2),
+                'branches' => $this->branches
+            ]);
+        }
+
         return $userArray;
     }
 
-    protected $append = ['balance', 'overdue', 'total_invoices_count', 'total_invoices_amount', 'tota_out_standing', 'total_paid', 'branches'];
+    protected $append = ['billingAddress', 'shippingAddress', 'balance', 'overdue', 'total_invoices_count', 'total_invoices_amount', 'total_out_standing', 'total_paid', 'branches'];
 
+    // protected $with = [];
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
