@@ -86,7 +86,12 @@ class OrderController extends Controller
         $confirmation_image = request()->file('confirmation_image');
         $path = 'orders/' . $id . '/';
 
-        if ($confirmation_image) {
+        if ($confirmation_image)
+        {
+            if ($order->shipping_status != 'Delivered') {
+                return $this->returnError(422, 'can not upload order confirmation image before order delivered');
+            }
+
             $imageName = $confirmation_image->hashName();
             $confirmation_image->storeAs('public/'.$path, $imageName);
             $fullPath = $path . $imageName;

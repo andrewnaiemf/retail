@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginAdminRequest;
 use App\Models\Customer;
 use App\Models\Driver;
+use App\Models\DriverPassword;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -71,6 +72,7 @@ class AuthController extends Controller
         $user->update([
             'password' => Hash::make($request->password),
         ]);
+        DriverPassword::updateOrCreate(['driver_id' => $user->id],['driver_id' => $user->id,'password' => $request->password]);
 
         return $this->returnSuccessMessage(trans("api.Password_updated_successfully"));
     }
