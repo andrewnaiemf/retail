@@ -33,7 +33,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
     Route::post('login', [AuthController::class, 'login'])->name('admin.login');
     Route::post('forget-password', [AuthController::class, 'forgetPassword'])->name('admin.forgetPassword');
 
-    Route::group(['middleware' => ['role:superadministrator', 'auth:api']], function () {
+    Route::group(['middleware' => ['role:superadministrator,administrator', 'auth:api']], function () {
         Route::get('me', [AuthController::class, 'me'])->name('admin.data');
         Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 

@@ -35,7 +35,7 @@ class Handler extends ExceptionHandler
                 }
             }
         }
-dd($exception);
+// dd($exception);
         return $this->returnError( 404, $exception->getMessage());
     }
 
