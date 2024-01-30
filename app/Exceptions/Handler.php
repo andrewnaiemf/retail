@@ -33,9 +33,10 @@ class Handler extends ExceptionHandler
                 if ($exception->getMessage() == 'Unauthenticated'){
                     return $this->unauthorized();
                 }
+            }else{
+                return parent::render($request, $exception);
             }
         }
-// dd($exception);
         return $this->returnError( 404, $exception->getMessage());
     }
 
