@@ -89,7 +89,7 @@ class OrderController extends Controller
 
         if ($confirmation_image) {
             $imageName = $confirmation_image->hashName();
-            $confirmation_image->storeAs($path, $imageName);
+            $confirmation_image->storeAs('public/'.$path, $imageName);
             $fullPath = $path . $imageName;
 
             $order->update([
