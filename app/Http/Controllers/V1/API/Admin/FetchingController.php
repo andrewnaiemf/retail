@@ -53,7 +53,7 @@ class FetchingController extends Controller
             return $this->returnData($responseData);
 
         }
-         catch (\Exception $e) {
+         catch (\Exception $e) {dd($e);
 
             Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
 
