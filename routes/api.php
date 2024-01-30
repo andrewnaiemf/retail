@@ -140,6 +140,7 @@ Route::group(['prefix' => 'driver'], function () {
 
         Route::resource('orders', DriverOrderController::class)->except(['show'])->names([
             'index' => 'customer.driver.index',
+            'update' => 'customer.driver.update',
             'create' => 'customer.driver.create',
             'store' => 'customer.driver.store',
             'edit' => 'customer.driver.edit',
