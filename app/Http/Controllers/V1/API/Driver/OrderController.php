@@ -48,25 +48,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $id = 3;
-        $order = Order::findOrFail($id);
-        dd($request->all(), $request->file('confirmation_image'), $request->hasFile('confirmation_image'));
-        $confirmation_image = request()->file('confirmation_image');
-        $path = 'Orders/' . $id . '/';
-dd($confirmation_image);
-        if ($confirmation_image) {
-            $imageName = $confirmation_image->hashName();
-            $confirmation_image->storeAs($path, $imageName);
-            $fullPath = $path . $imageName;
-
-            $order->update([
-                'confirmation_image' => $fullPath
-            ]);
-        }
-
-        $order->update(['shipping_status' => $request->status]);
-
-        return $this->returnSuccessMessage('Order status updated successfully');
+        //
     }
 
     /**
