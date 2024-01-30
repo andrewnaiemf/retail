@@ -15,7 +15,7 @@ class FiltersOrders implements Filter
                 $query->where('status', 'Draft');
             }elseif ($value == 'Current') {
                 $query->where('status', 'Approved')->where( function ($q) {
-                    $q->where('shipping_status', 'Delivered')
+                    $q->where('shipping_status',  '!=', 'Delivered')
                     ->orWhereNull('shipping_status');
                 });
             }

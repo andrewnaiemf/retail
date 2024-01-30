@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
 
-class Driver extends Authenticatable
+class Driver extends Authenticatable implements JWTSubject
 {
     use HasFactory;
     use LaratrustUserTrait;
+    use Notifiable;
 
     protected $table = 'users';
 
@@ -31,6 +34,27 @@ class Driver extends Authenticatable
         return $driverArray;
     }
 
+
+        /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+
     public function driverPassword()
     {
         return $this->hasOne(DriverPassword::class);
@@ -39,6 +63,10 @@ class Driver extends Authenticatable
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function orders(){
+        return $this->hasMany(Order::class);
     }
 
 

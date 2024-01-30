@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\V1\API\Customer;
+namespace App\Http\Controllers\V1\API\Driver;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginAdminRequest;
 use App\Models\Customer;
+use App\Models\Driver;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,27 +24,32 @@ class AuthController extends Controller
     {
         $valid_data = $request->validated();
 
-        if(!Auth::guard('customer')->attempt($valid_data)) {
+        if(!Auth::guard('driver')->attempt($valid_data)) {
             return $this->unauthorized();
         }
 
-        $user = Customer::where('phone_number', $request->phone_number)->whereRoleIs('user')->with(['orders' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])->first();
+        $driver = Driver::where('phone_number', $request->phone_number)
+            ->whereRoleIs('driver')
+            ->with(['orders' => function ($query) {
+                $query->where('status', 'Approved')
+                ->where('shipping_status' ,'!=', 'Delivered')
+                ->orWhereNull('shipping_status')
+                ->orderBy('created_at', 'desc');
+            }])->first();
 
-        if (!$user) {
+        if (!$driver) {
             return $this->unauthorized();
         }
 
-        $token = JWTAuth::fromUser($user);
+        $token = JWTAuth::fromUser($driver);
 
-        return $this->returnData(['user' => $user, 'token' => $token], 'LogedIn successfully');
+        return $this->returnData(['driver' => $driver, 'token' => $token], 'LogedIn successfully');
     }
 
     public function logout()
     {
 
-        Auth::guard('customer')->logout();
+        Auth::guard('driver')->logout();
 
         return $this->returnSuccessMessage('Successfully logged out');
     }
@@ -60,7 +66,7 @@ class AuthController extends Controller
         if ($validator->fails()) {
             return $this->returnValidationError(401, $validator->errors()->all());
         }
-        $user = Customer::where('phone_number', $request->phone_number)->first();
+        $user = Driver::where('phone_number', $request->phone_number)->first();
 
         $user->update([
             'password' => Hash::make($request->password),
@@ -75,13 +81,16 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $user = Customer::where( 'id', auth()->user()->id)->whereRoleIs('user')->with(['orders' => function ($query) {
-            $query->orderBy('created_at', 'desc');
-        }])->first();
+        $driver = Driver::where( 'id', auth()->user()->id)->whereRoleIs('driver')
+            ->with(['orders' => function ($query) {
+                $query->where('status', 'Approved')
+                ->where('shipping_status' ,'!=', 'Delivered')
+                ->orWhereNull('shipping_status')
+                ->orderBy('created_at', 'desc');
+            }])->first();
 
-        if (auth()->check() && $user) {
-            return $this->returnData(['user' => $user]);
-
+        if (auth()->check() && $driver) {
+            return $this->returnData(['driver' => $driver]);
         } else {
             return $this->unauthorized();
         }

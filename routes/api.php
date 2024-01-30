@@ -15,6 +15,8 @@ use App\Http\Controllers\V1\API\Customer\InvoiceController as CustomerInvoiceCon
 use App\Http\Controllers\V1\API\Customer\OrderController;
 use App\Http\Controllers\V1\API\Customer\ProductController as CustomerProductController;
 use App\Http\Controllers\V1\API\Customer\ReceiptController as CustomerReceiptController;
+use App\Http\Controllers\V1\API\Driver\AuthController as DriverAuthController;
+use App\Http\Controllers\V1\API\Driver\OrderController as DriverOrderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -123,4 +125,29 @@ Route::group(['prefix' => 'user'], function () {
 
     });
 
+});
+
+
+
+Route::group(['prefix' => 'driver'], function () {
+    Route::post('login', [DriverAuthController::class, 'login'])->name('driver.login');
+    Route::post('forget-password', [DriverAuthController::class, 'forgetPassword'])->name('driver.forgetPassword');
+
+    Route::group(['middleware' => ['role:driver', 'auth:driver']], function () {
+
+        Route::get('me', [DriverAuthController::class, 'me'])->name('driver.data');
+        Route::post('logout', [DriverAuthController::class, 'logout'])->name('driver.logout');
+
+        Route::resource('orders', DriverOrderController::class)->except(['show'])->names([
+            'index' => 'customer.driver.index',
+            'create' => 'customer.driver.create',
+            'store' => 'customer.driver.store',
+            'edit' => 'customer.driver.edit',
+            'destroy' => 'customer.driver.destroy',
+        ]);
+
+        Route::post('order/{id}', [DriverOrderController::class, 'updateOrder'])->name('driver.updateOrder');
+
+
+    });
 });
