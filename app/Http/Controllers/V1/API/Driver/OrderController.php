@@ -82,7 +82,6 @@ class OrderController extends Controller
      */
     public function updateOrder(UpdateOrderStatusRequest $request, $id)
     {
-
         $order = Order::findOrFail($id);
         $confirmation_image = request()->file('confirmation_image');
         $path = 'orders/' . $id . '/';

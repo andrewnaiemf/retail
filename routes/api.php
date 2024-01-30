@@ -147,7 +147,7 @@ Route::group(['prefix' => 'driver'], function () {
             'destroy' => 'customer.driver.destroy',
         ]);
 
-        Route::post('order/{id}', [DriverOrderController::class, 'updateOrder'])->name('driver.updateOrder');
+        Route::post('order/{order}', [DriverOrderController::class, 'updateOrder'])->name('driver.updateOrder');
 
 
     });
