@@ -43,8 +43,25 @@ class AuthController extends Controller
         }
 
         $token = JWTAuth::fromUser($driver);
+        $this->device_token($request->device_token, $driver);
 
         return $this->returnData(['driver' => $driver, 'token' => $token], 'LogedIn successfully');
+    }
+
+
+    private function device_token($device_token, $user)
+    {
+
+        if(!isset($user->device_token)) {
+            $user->update(['device_token' => json_encode($device_token)]);
+        } else {
+            $devices_token = $user->device_token;
+
+            if(!in_array($device_token, $devices_token)) {
+                array_push($devices_token, $device_token);
+                $user->update(['device_token' => json_encode($devices_token)]);
+            }
+        }
     }
 
     public function logout()

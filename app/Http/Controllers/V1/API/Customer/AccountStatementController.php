@@ -13,11 +13,13 @@ class AccountStatementController extends Controller
 {
     public function index(Request $request)
     {
-        $receipts = QueryBuilder::for(Receipt::class)
+        $per_page = $request->header('per_page') ?? 10;
+
+        $receipts = QueryBuilder::for(Receipt::class)->where('contact_id', $request->branch_id)
         ->allowedFilters([
             AllowedFilter::custom('date_range', new StartsBetweenFilter),
             ])
-        ->paginate(10);
+        ->paginate($per_page);
 
         return $this->returnData($receipts);
     }

@@ -18,6 +18,6 @@ class Allocation extends Model
 
     public function allocatee()
     {
-        return $this->belongsToMany(Invoice::class, 'allocatee_id');
+        return $this->belongsToMany(Invoice::class, 'allocations', 'id', 'allocatee_id');
     }
 }

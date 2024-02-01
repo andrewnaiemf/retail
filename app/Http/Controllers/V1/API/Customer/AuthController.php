@@ -37,7 +37,24 @@ class AuthController extends Controller
 
         $token = JWTAuth::fromUser($user);
 
+        $this->device_token($request->device_token, $user);
+
         return $this->returnData(['user' => $user, 'token' => $token], 'LogedIn successfully');
+    }
+
+    private function device_token($device_token, $user)
+    {
+
+        if(!isset($user->device_token)) {
+            $user->update(['device_token' => json_encode($device_token)]);
+        } else {
+            $devices_token = $user->device_token;
+
+            if(!in_array($device_token, $devices_token)) {
+                array_push($devices_token, $device_token);
+                $user->update(['device_token' => json_encode($devices_token)]);
+            }
+        }
     }
 
     public function logout()
@@ -77,6 +94,7 @@ class AuthController extends Controller
     {
         $user = Customer::where( 'id', auth()->user()->id)->whereRoleIs('user')->with(['orders' => function ($query) {
             $query->orderBy('created_at', 'desc');
+            $query->with(['orderItems', 'customer', 'driver']);
         }])->first();
 
         if (auth()->check() && $user) {

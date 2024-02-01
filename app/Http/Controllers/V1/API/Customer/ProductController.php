@@ -20,14 +20,23 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $customer = auth('customer')->user();
-        $customer = QueryBuilder::for(Product::class)
-        ->allowedFilters(
-            AllowedFilter::custom('name', new FiltersProductByCustomer($customer->id)),
-        )
-        ->paginate(10);
+        $per_page = $request->header('per_page') ?? 10;
 
-        return $this->returnData($customer);
+        $customer = auth('customer')->user();
+        $query = QueryBuilder::for(Product::class)->whereHas('customers', function ($q) use ($customer){
+
+                $q->where('customer_product.customer_id', $customer->id);
+        });
+
+        if (isset($request['filter']['name']) && $request['filter']['name']) {
+            $query->allowedFilters(
+                AllowedFilter::custom('name', new FiltersProductByCustomer($customer->id))
+            );
+        }
+
+        $products = $query->paginate($per_page);
+
+        return $this->returnData($products);
     }
 
     /**

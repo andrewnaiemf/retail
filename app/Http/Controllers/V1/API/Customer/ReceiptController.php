@@ -18,7 +18,7 @@ class ReceiptController extends Controller
         $per_page = $request->header('per_page') ?? 10;
         $customer = auth('customer')->user();
         $receipts = Receipt::where('contact_id', $customer->id)
-            ->with(['contact', 'account', 'allocates'])
+            ->with(['contact', 'account', 'allocates.allocatee'])
             ->simplePaginate($per_page);
 
         return $this->returnData($receipts);
@@ -53,7 +53,7 @@ class ReceiptController extends Controller
      */
     public function show($id)
     {
-        $receipt = Receipt::with(['contact', 'account', 'allocates'])->findOrFail($id);
+        $receipt = Receipt::with(['contact', 'account', 'allocates.allocatee'])->findOrFail($id);
 
         return $this->returnData($receipt);
     }

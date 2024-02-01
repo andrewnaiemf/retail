@@ -18,7 +18,7 @@ class InvoiceController extends Controller
         $per_page = $request->header('per_page') ?? 10;
         $customer = auth('customer')->user();
         $invoice = Invoice::where('contact_id', $customer->id)
-        ->with(['payments', 'inventory', 'contact'])
+        ->with(['payments', 'inventory', 'contact', 'lineItems.product'])
         ->simplePaginate($per_page);
 
         return $this->returnData($invoice);
@@ -56,7 +56,7 @@ class InvoiceController extends Controller
         $customer = auth('customer')->user();
         $invoice = Invoice::whereHas('contact', function ($q) use ($customer) {
             $q->where('invoices.contact_id', $customer->id);
-        })->with(['payments', 'inventory', 'contact'])->findOrFail($id);
+        })->with(['payments', 'inventory', 'contact', 'lineItems.product'])->findOrFail($id);
 
         return $this->returnData($invoice);
     }

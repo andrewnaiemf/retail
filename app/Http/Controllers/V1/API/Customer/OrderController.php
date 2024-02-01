@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1\API\Customer;
 
 use App\Filter\FiltersOrders;
+use App\Filter\FiltersOrdersByCustomer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateOrderRequest;
+use App\Models\Customer;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -20,11 +23,19 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->header('per_page') ?? 10;
-        $orders = QueryBuilder::for(Order::class)->with(['orderItems','driver'])
-            ->allowedFilters(
-                AllowedFilter::custom('status', new FiltersOrders)
-            )
-            ->simplePaginate($per_page);
+        $customer = auth('customer')->user();
+
+        $query = QueryBuilder::for(Order::class)->whereHas('customer', function ($q) use ($customer)
+        {
+            $q->where('id', $customer->id);
+        })->with(['orderItems', 'driver', 'customer']);
+
+        if (isset($request['filter']['status']) && $request['filter']['status']) {
+           $query->allowedFilters(
+                AllowedFilter::custom('status', new FiltersOrdersByCustomer($customer->id))
+            );
+        }
+        $orders =  $query->simplePaginate($per_page);
 
         return $this->returnData($orders);
     }
@@ -48,7 +59,7 @@ class OrderController extends Controller
     public function store(ValidateOrderRequest $request)
     {
         $orderData = $request->input('order');
-        $customer = auth('customer')->user();
+        $customer = User::findOrFail($orderData['branch_id']);
         $lineItems = $orderData['line_items'];
         $modifiedLineItems = $this->modifyLineItems($customer, $lineItems);
 
@@ -65,13 +76,18 @@ class OrderController extends Controller
         $modifiedLineItems = [];
 
         foreach ($lineItems as $lineItem) {
-            $product = $customer->products->where('id', $lineItem['product_id'])->first();
-            $unitPrice = $product->pivot->price;
+            if (!empty($customer->products)) {
+                $product = $customer->products->where('id', $lineItem['product_id'])->first();
+                $unitPrice = $product->pivot->price;
 
-            $modifiedLineItem = $lineItem;
-            $modifiedLineItem['unit_price'] = $unitPrice;
-            $modifiedLineItem['tax_percent'] = 15;
-            $modifiedLineItems[] = $modifiedLineItem;
+                $modifiedLineItem = $lineItem;
+                $modifiedLineItem['unit_price'] = $unitPrice;
+                $modifiedLineItem['tax_percent'] = 15;
+                $modifiedLineItems[] = $modifiedLineItem;
+            }else{
+                //handle not exist product to this customer
+            }
+
         }
 
         return $modifiedLineItems;
