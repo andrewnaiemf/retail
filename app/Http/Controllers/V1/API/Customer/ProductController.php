@@ -23,7 +23,7 @@ class ProductController extends Controller
         $per_page = $request->header('per_page') ?? 10;
 
         $customer = auth('customer')->user();
-        $query = QueryBuilder::for(Product::class)->whereHas('customers', function ($q) use ($customer){
+        $query = QueryBuilder::for(Product::class)->with('customers')->whereHas('customers', function ($q) use ($customer){
 
                 $q->where('customer_product.customer_id', $customer->id);
         });
