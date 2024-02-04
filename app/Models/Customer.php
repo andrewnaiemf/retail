@@ -110,7 +110,10 @@ class Customer extends Authenticatable implements JWTSubject
 
     public function getBranchesAttribute()
     {
-        $branches = User::where('tax_number', $this->tax_number)->get();
+        $branches = null ;
+        if ($this->tax_number) {
+            $branches = User::where('tax_number', $this->tax_number)->get();
+        }
         return  $branches;
     }
 
