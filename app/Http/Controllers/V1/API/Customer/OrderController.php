@@ -59,7 +59,7 @@ class OrderController extends Controller
     public function store(ValidateOrderRequest $request)
     {
         $orderData = $request->input('order');
-        $customer = User::findOrFail($orderData['branch_id']);
+        $customer = Customer::findOrFail($orderData['branch_id']);
         $lineItems = $orderData['line_items'];
         $modifiedLineItems = $this->modifyLineItems($customer, $lineItems);
 
@@ -75,8 +75,9 @@ class OrderController extends Controller
     {
         $modifiedLineItems = [];
 
-        foreach ($lineItems as $lineItem) {
-            if (!empty($customer->products)) {
+        if (!empty($customer->products)) {
+            foreach ($lineItems as $lineItem) {
+
                 $product = $customer->products->where('id', $lineItem['product_id'])->first();
                 $unitPrice = $product->pivot->price;
 
@@ -84,10 +85,9 @@ class OrderController extends Controller
                 $modifiedLineItem['unit_price'] = $unitPrice;
                 $modifiedLineItem['tax_percent'] = 15;
                 $modifiedLineItems[] = $modifiedLineItem;
-            }else{
-                //handle not exist product to this customer
             }
-
+        }else{
+                //handle not exist product to this customer
         }
 
         return $modifiedLineItems;
