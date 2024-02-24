@@ -47,6 +47,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
 
         Route::put('customer/products', [ProductController::class, 'storeProductsForCustomer']);
         Route::resource('products', ProductController::class);
+        Route::post('product-picture/{id}', [ProductController::class, 'attachPicture']);
 
         Route::resource('drivers', DriverController::class);
 

@@ -30,7 +30,8 @@ class Product extends Model
         'track_quantity',
         'tax_id',
         'special_tax_reason_id',
-        'pos_product'
+        'pos_product',
+        'picture'
     ];
 
     public function category(){

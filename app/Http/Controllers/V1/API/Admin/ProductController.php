@@ -8,6 +8,8 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Filter\FiltersProduct as FiltersProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -115,6 +117,36 @@ class ProductController extends Controller
         }
 
         return $this->returnSuccessMessage('Products attached to customer successfully');
+    }
+
+    public function attachPicture(Request $request, $id){
+
+        $validator = Validator::make($request->all(), [
+            'picture' => 'required|file|mimes:jpeg,png,jpg,gif|max:20048'
+        ]);
+        if ($validator->fails()) {
+            return $this->returnValidationError(401, $validator->errors()->all());
+        }        $product = Product::findOrFail($id);
+        $picture = $request['picture'] ?? null;
+
+        $path = 'products/' . $product->id . '/';
+
+        // Check if the product already has a picture
+        if ($product->picture) {
+            // If yes, delete the existing picture from storage
+            Storage::delete('public/' . $product->picture);
+        }
+
+        // Store the new picture
+        $imageName = $picture->hashName();
+        $picture->storeAs('public/' . $path, $imageName);
+        $fullPath = $path . $imageName;
+
+        // Update the product record with the new picture path
+        $product->picture = $fullPath;
+        $product->save();
+        return $this->returnSuccessMessage('Product picture uploaded successfully');
+
     }
 
     /**
