@@ -56,6 +56,12 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
+    'twilio_sid' => env('TWILIO_SID', null),
+
+    'twilio_auth_token' => env('TWILIO_AUTH_TOKEN', null),
+
+    'twilio_whatsapp_number' => env('TWILIO_WHATSAPP_NUMBER', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
