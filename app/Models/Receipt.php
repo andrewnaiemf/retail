@@ -28,12 +28,14 @@ class Receipt extends Model
     public function toArray()
     {
         $inventory = Inventory::first();
-        $invoice = parent::toArray();
-        $invoice = array_merge($invoice, [
+        $receipt = parent::toArray();
+        $receipt['kind'] = $this->kind == 'received' ? trans('locale.received') : $this->kind ;
+
+        $receipt = array_merge($receipt, [
             'un_allocate_amount' => $this->getUnAllocateAmountAttribute(),
             'from_location' => $inventory
         ]);
-        return $invoice;
+        return $receipt;
     }
 
     public function getUnAllocateAmountAttribute()

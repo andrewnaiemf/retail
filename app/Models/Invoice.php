@@ -29,7 +29,9 @@ class Invoice extends Model
     public function toArray()
     {
         $invoice = parent::toArray();
-        $invoice = array_merge($invoice, ['type' => 'tax_invoice', 'owner' => $this->getOwnerAttribute()]);
+        $invoice['status'] = $this->status == 'Paid' ? trans('locale.Paid') : $this->status ;
+        $invoice['payment_method'] = $this->payment_method == -1 ? trans('locale.in_advance') : $this->status ;
+        $invoice = array_merge($invoice, ['type' => trans('locale.tax_invoice'), 'owner' => $this->getOwnerAttribute()]);
         return $invoice;
     }
 
