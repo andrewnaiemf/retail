@@ -52,6 +52,24 @@ class Customer extends Authenticatable implements JWTSubject
         return $userArray;
     }
 
+    public function getDeviceTokenAttribute($value)
+    {
+        // Check if the value is already an array
+        if (is_array($value)) {
+            return $value;
+        }
+
+        // Check if the value is a JSON string
+        if (is_string($value) && json_decode($value) !== null) {
+            return json_decode($value, true);
+        }
+
+        // If none of the above conditions match, return an empty array
+        return [];
+
+    }
+
+
     protected $append = ['billingAddress', 'shippingAddress', 'balance', 'overdue', 'total_invoices_count', 'total_invoices_amount', 'total_out_standing', 'total_paid', 'branches'];
 
     // protected $with = [];

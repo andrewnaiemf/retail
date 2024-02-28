@@ -49,8 +49,7 @@ class AuthController extends Controller
             $user->update(['device_token' => json_encode($device_token)]);
         } else {
             $devices_token = $user->device_token;
-
-            if( $devices_token && $device_token && !in_array($device_token, $devices_token)) {
+            if(!in_array($device_token, $devices_token)) {
                 array_push($devices_token, $device_token);
                 $user->update(['device_token' => json_encode($devices_token)]);
             }

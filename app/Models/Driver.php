@@ -35,6 +35,23 @@ class Driver extends Authenticatable implements JWTSubject
         return $driverArray;
     }
 
+    public function getDeviceTokenAttribute($value)
+    {
+        // Check if the value is already an array
+        if (is_array($value)) {
+            return $value;
+        }
+
+        // Check if the value is a JSON string
+        if (is_string($value) && json_decode($value) !== null) {
+            return json_decode($value, true);
+        }
+
+        // If none of the above conditions match, return an empty array
+        return [];
+
+    }
+
 
         /**
      * Get the identifier that will be stored in the subject claim of the JWT.
