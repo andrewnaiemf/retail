@@ -17,6 +17,7 @@ use App\Http\Controllers\V1\API\Customer\ProductController as CustomerProductCon
 use App\Http\Controllers\V1\API\Customer\ReceiptController as CustomerReceiptController;
 use App\Http\Controllers\V1\API\Driver\AuthController as DriverAuthController;
 use App\Http\Controllers\V1\API\Driver\OrderController as DriverOrderController;
+use App\Http\Controllers\V1\API\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -123,7 +124,8 @@ Route::group(['prefix' => 'user'], function () {
 
         Route::get('account-statement', [AccountStatementController::class, 'index']);
 
-
+        Route::get('notifications', [NotificationController::class, 'index' ]);
+        Route::get('notification/{id}', [NotificationController::class, 'show' ]);
     });
 
 });
@@ -150,6 +152,7 @@ Route::group(['prefix' => 'driver'], function () {
 
         Route::post('order/{order}', [DriverOrderController::class, 'updateOrder'])->name('driver.updateOrder');
 
-
+        Route::get('notifications', [NotificationController::class, 'index' ]);
+        Route::get('notification/{id}', [NotificationController::class, 'show' ]);
     });
 });

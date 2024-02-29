@@ -67,7 +67,7 @@ class OrderController extends Controller
         $order = $this->createOrder($customer, $reference, $request);
 
         $this->createOrderItems($order, $modifiedLineItems);
-
+        //TODO Notify whatsapp message to owner that he has new order from customer name.
         return response()->json(['message' => 'Order created successfully']);
     }
 

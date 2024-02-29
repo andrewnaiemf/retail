@@ -4,18 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Notification extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [//user_id user who notify the other one
         'user_id', 'notified_user_id', 'type', 'screen', 'data', 'read'
     ];
 
     protected $hidden =[
-        'deleted_at',
         'created_at',
         'updated_at',
     ];
@@ -38,19 +36,10 @@ class Notification extends Model
     protected function generateMessage($messageTemplateKey, $sender, $data)
     {
         $message = '';
-        $currentLanguage = auth()->user()->lng ?? 'en';
+        $currentLanguage = auth()->user()->locale ?? 'en';
         app()->setLocale($currentLanguage);
 
-        switch ($messageTemplateKey) {
-            case 'rating_message':
-                $data = data_get($data, 'data', '');
-                $stars = data_get($data, 'rate', '');
-                $message = str_replace(':sender_name', $sender['name'], __('messages.' . $messageTemplateKey, ['stars' => $stars]));
-                break;
-            default:
-                $message = str_replace(':sender_name', $sender['name'], __('messages.' . $messageTemplateKey, []));
-                break;
-        }
+        $message = __('messages.' . $messageTemplateKey, []);
 
         return $message;
     }

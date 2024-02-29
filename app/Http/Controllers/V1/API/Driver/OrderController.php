@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Order;
+use App\Notifications\PushNotification;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -102,6 +103,9 @@ class OrderController extends Controller
         }
 
         $order->update(['shipping_status' => $request->status]);
+        
+        $sender_id = auth()->user()->id;
+        PushNotification::send($sender_id, $order->customer_id, $order, $request->status);
 
         return $this->returnSuccessMessage('Order status updated successfully');
     }
