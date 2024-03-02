@@ -20,7 +20,7 @@ class DriverController extends Controller
     {
         $per_page = $request->header('per_page') ?? 10;
 
-        $drivers = Driver::whereRoleIs('driver')->simplePaginate($per_page);
+        $drivers = Driver::whereRoleIs('driver')->paginate($per_page);
 
         return $this->returnData($drivers);
     }

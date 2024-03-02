@@ -20,7 +20,7 @@ class CustomerController extends Controller
         $per_page = $request->header('per_page') ?? 10;
         $customers = QueryBuilder::for(Customer::class)->with(['billingAddress','shippingAddress'])
             ->allowedFilters(['name', 'status'])->whereRoleIs('user')
-            ->simplePaginate($per_page);
+            ->paginate($per_page);
 
         return $this->returnData($customers);
     }

@@ -27,7 +27,7 @@ class OrderController extends Controller
             ->allowedFilters(
                 AllowedFilter::custom('status', new FiltersOrders)
             )
-            ->simplePaginate($per_page);
+            ->paginate($per_page);
 
         return $this->returnData($orders);
     }

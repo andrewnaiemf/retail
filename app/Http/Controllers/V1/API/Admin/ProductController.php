@@ -28,7 +28,7 @@ class ProductController extends Controller
             ->allowedFilters(
                 AllowedFilter::custom('name', new FiltersProduct)
             )->with(['category'])
-            ->simplePaginate($per_page);
+            ->paginate($per_page);
 
         return $this->returnData($products);
     }
