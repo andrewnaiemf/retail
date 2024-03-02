@@ -24,6 +24,7 @@ class Invoice extends Model
         'terms_conditions',
         'qrcode_string',
         'payment_method',
+        'inventory'
     ];
 
     public function toArray()

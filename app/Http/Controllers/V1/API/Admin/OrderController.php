@@ -136,7 +136,7 @@ class OrderController extends Controller
         $order = Order::where(['status' => 'Approved', 'id' => $order_id])->first();
 
         if (!isset($order)) {
-            return $this->returnError(422, 'not exist order');
+            return $this->returnError(422, 'Invalid data');
         }
 
         $order->driver()->associate($driver);
