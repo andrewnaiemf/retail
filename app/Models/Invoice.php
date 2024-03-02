@@ -31,7 +31,7 @@ class Invoice extends Model
         $invoice = parent::toArray();
         $invoice['status'] = $this->status == 'Paid' ? trans('locale.Paid') : $this->status ;
         $invoice['payment_method'] = $this->payment_method == -1 ? trans('locale.in_advance') : $this->status ;
-        $invoice['inventory'] = $this->inventory;
+        $invoice['inventory'] = Inventory::find(1);
         $invoice = array_merge($invoice, ['type' => trans('locale.tax_invoice'), 'owner' => $this->getOwnerAttribute()]);
         return $invoice;
     }
