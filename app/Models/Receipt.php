@@ -30,7 +30,7 @@ class Receipt extends Model
         $inventory = Inventory::first();
         $receipt = parent::toArray();
         $receipt['kind'] = $this->kind == 'received' ? trans('locale.received') : $this->kind ;
-
+        $receipt['paid_amount'] = $this->amount;
         $receipt = array_merge($receipt, [
             'un_allocate_amount' => $this->getUnAllocateAmountAttribute(),
             'from_location' => $inventory
