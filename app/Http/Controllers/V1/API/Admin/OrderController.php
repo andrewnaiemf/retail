@@ -133,7 +133,7 @@ class OrderController extends Controller
 
         $driver = Driver::findOrFail($request->driver_id);
 
-        $order = Order::where(['status' => 'Approved', 'id' => $order_id])->findOrFail($order_id)->first();
+        $order = Order::where(['status' => 'Approved', 'id' => $order_id])->first();
 
         if (!isset($order)) {
             return $this->returnError(422, 'not exist order');
