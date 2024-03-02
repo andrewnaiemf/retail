@@ -112,8 +112,11 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $order_id, $status){
 
-        $order = Order::where('status','Draft')->findOrFail($order_id)->first();
+        $order = Order::where(['status' => 'Draft', 'id' => $order_id])->findOrFail($order_id)->first();
 
+        if (!isset($order)) {
+            return $this->returnError(422, 'not exist order');
+        }
         $order->update([
             'status' => $status
         ]);
@@ -133,7 +136,7 @@ class OrderController extends Controller
 
         $driver = Driver::findOrFail($request->driver_id);
 
-        $order = Order::where('status','Draft')->findOrFail($order_id)->first();
+        $order = Order::where('status','Draft')->first();
 
         $order->driver()->associate($driver);
 
