@@ -45,7 +45,9 @@ class Customer extends Authenticatable implements JWTSubject
                 'total_invoices_amount' => (float)$this->total_invoices_amount,
                 'total_out_standing' => (float)$this->total_out_standing,
                 'total_paid' => (float)$this->total_out_standing - round($this->overdue, 2),
-                'branches' => $this->branches
+                'branches' => $this->branches,
+                'shipping_address' => $this->shippingAddress,
+                'billing_address' => $this->billingAddress,
             ]);
         }
 
