@@ -68,7 +68,9 @@ class DriverController extends Controller
     public function show($id)
     {
 
-        $driver = Driver::whereRoleIs('driver')->findOrFail($id);
+        $driver = Driver::whereRoleIs('driver')->with(['orders' =>  function($q) {
+            $q->where('status','Approved')->where('shipping_status','Delivered');
+        }])->findOrFail($id);
 
         return $this->returnData($driver);
     }

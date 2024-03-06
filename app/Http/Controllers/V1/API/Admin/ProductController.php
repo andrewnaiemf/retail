@@ -111,7 +111,8 @@ class ProductController extends Controller
                 // Always update updated_at
                 $pivotData['updated_at'] = now();
 
-                $customer->products()->sync([$productId => $pivotData], false);
+//              $customer->products()->sync([$productId => $pivotData], false);
+                $customer->products()->attach([$productId => $pivotData]);
 
             }
         }
@@ -169,6 +170,16 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = Product::findOrFail($id);
+
+        // Delete associated picture if exists
+        if ($product->picture) {
+            Storage::delete('public/' . $product->picture);
+        }
+
+        // Detach the product from all customers
+        $product->customers()->detach();
+
+        return $this->returnSuccessMessage('Product deleted successfully');
     }
 }

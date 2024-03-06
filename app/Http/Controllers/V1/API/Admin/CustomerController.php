@@ -54,7 +54,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        $customer = Customer::whereRoleIs('user')->find($id);
+        $customer = Customer::with('products')->whereRoleIs('user')->find($id);
 
         if (!$customer) {
             return $this->returnError(422, 'invalid customer id');

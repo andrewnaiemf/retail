@@ -7,6 +7,8 @@ return [
     'tax_invoice' => 'Tax Invoice',
     'Paid' => 'Accepted',
     'in_advance' => 'In Advance',
-    'received' => 'ٌreceived',
+    'received' => 'received',
+    'receipt' => 'receipt',
+    'invoice' => 'invoice',
 
 ];

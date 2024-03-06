@@ -7,5 +7,6 @@ return [
     'Paid' => 'موافق عليه',
     'in_advance' => 'الدفع بالاجل',
     'received' => 'قبض',
-
+    'receipt' => 'سند',
+    'invoice' => 'فاتورة',
 ];
