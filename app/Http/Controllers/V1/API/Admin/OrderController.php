@@ -112,7 +112,7 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $order_id, $status){
 
-        $order = Order::where('status','Draft')->findOrFail($order_id)->first();
+        $order = Order::findOrFail($order_id)->where('status','Draft')->first();
 
         $order->update([
             'status' => $status
