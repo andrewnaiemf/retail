@@ -10,6 +10,7 @@ use App\Http\Controllers\V1\API\Admin\ProductController;
 use App\Http\Controllers\V1\API\Admin\ReceiptController;
 use App\Http\Controllers\V1\API\Customer\AccountStatementController;
 use App\Http\Controllers\V1\API\Customer\AuthController as CustomerAuthController;
+use App\Http\Controllers\V1\API\Customer\StatisticController as StatisticController;
 use App\Http\Controllers\V1\API\Customer\CustomerController as CustomerCustomerController;
 use App\Http\Controllers\V1\API\Customer\InvoiceController as CustomerInvoiceController;
 use App\Http\Controllers\V1\API\Customer\OrderController;
@@ -64,6 +65,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
 Route::group(['prefix' => 'user'], function () {
     Route::post('login', [CustomerAuthController::class, 'login'])->name('customer.login');
     Route::post('forget-password', [CustomerAuthController::class, 'forgetPassword'])->name('customer.forgetPassword');
+    Route::get('statistic', [StatisticController::class, 'index'])->name('customer.statistic');
 
     Route::group(['middleware' => ['role:user', 'auth:customer']], function () {
 
