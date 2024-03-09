@@ -36,7 +36,7 @@ class LineItem extends Model
         return $this->belongsTo(Invoice::class);
     }
 
-    public function qoyod()
+    public function product()
     {
         return $this->belongsTo(Product::class);
     }
