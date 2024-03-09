@@ -17,7 +17,8 @@ class StatisticController extends Controller
      */
     public function index()
     {
-        $currentYear = '2023';
+        $currentYear = date('Y');
+
         $customer = auth('customer')->user();
 
         $invoiceData = Invoice::where('contact_id', $customer->id)
