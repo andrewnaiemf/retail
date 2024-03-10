@@ -27,7 +27,7 @@ class StartsBetweenFilter implements Filter
                     ->where(function (Builder $query) use ($start , $end) {
                         $query->whereBetween('created_at', [$start, $end]);
                     });
-            })->with(['contact', 'account', 'allocates']);
+            })->with(['contact']);
         }
     }
 }

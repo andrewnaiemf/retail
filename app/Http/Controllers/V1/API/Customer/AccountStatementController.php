@@ -31,11 +31,15 @@ class AccountStatementController extends Controller
 
         $invoices = $invoices->map(function ($invoice) {
             $invoice['type'] = trans('locale.invoice');
+            $invoice['debit'] = $invoice->total;
+            $invoice['credit'] = 0.00;
             return $invoice;
         });
 
         $receipts = $receipts->map(function ($receipt) {
             $receipt['type'] = trans('locale.receipt');
+            $receipt['debit'] = 0;
+            $receipt['credit'] = $receipt->amount;
             return $receipt;
         });
 
