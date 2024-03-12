@@ -38,8 +38,9 @@ class Order extends Model
     }
 
     protected function getTotalAttribute(){
-        return $this->orderItems()->sum('unit_price');
-    }
+        return $this->orderItems->sum(function ($item) {
+            return $item->quantity * $item->product->customer_price;
+        });    }
 
 
     public function orderItems()
