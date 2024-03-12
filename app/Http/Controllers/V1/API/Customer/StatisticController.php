@@ -17,7 +17,7 @@ class StatisticController extends Controller
      */
     public function index()
     {
-        $currentYear = date('Y');
+        $currentYear = '2023';
 
         $customer = auth('customer')->user();
 
@@ -43,7 +43,7 @@ class StatisticController extends Controller
         $statisticsData = [];
 
         foreach ($statistics as $month => $statistic) {
-            $year = $currentYear;
+            $year = 'Year';
 
             if (!isset($statisticsData[$year])) {
                 $statisticsData[$year] = [];
@@ -81,6 +81,7 @@ class StatisticController extends Controller
             }
             ksort($yearData); // Sort months in ascending order
         }
+        $statisticsData[$year] = array_values($statisticsData[$year]); // Convert Year to indexed array
 
         return $statisticsData;
     }
