@@ -33,6 +33,7 @@ class AccountStatementController extends Controller
             $invoice['type'] = trans('locale.invoice');
             $invoice['debit'] = $invoice->total;
             $invoice['credit'] = 0.00;
+            $invoice['date'] = $invoice->issue_date;
             return $invoice;
         });
 
