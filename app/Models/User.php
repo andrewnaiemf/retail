@@ -30,6 +30,7 @@ class User extends Authenticatable implements JWTSubject
         'phone_number',
         'tax_number',
         'status',
+        'locale'
     ];
 
     /**
@@ -68,7 +69,7 @@ class User extends Authenticatable implements JWTSubject
         return [];
 
     }
-    
+
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

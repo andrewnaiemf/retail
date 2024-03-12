@@ -142,6 +142,7 @@ Route::group(['prefix' => 'driver'], function () {
 
         Route::get('me', [DriverAuthController::class, 'me'])->name('driver.data');
         Route::post('logout', [DriverAuthController::class, 'logout'])->name('driver.logout');
+        Route::put('lang/{id}', [DriverAuthController::class, 'update'])->name('driver.update');
 
         Route::resource('orders', DriverOrderController::class)->except(['show'])->names([
             'index' => 'customer.driver.index',

@@ -135,7 +135,11 @@ class AuthController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $customer = Driver::find($id);
+        $customer->update(['locale' => $request->locale]);
+
+        return $this->returnSuccessMessage('Successfully language changed');
+
     }
 
     /**
