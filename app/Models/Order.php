@@ -27,9 +27,10 @@ class Order extends Model
     }
 
     protected function getTotalTaxAttribute(){
-        $totalTax = $this->orderItems()->sum(DB::raw('quantity * unit_price * 0.15'));
+        $totalTax = $this->orderItems->sum(function ($item) {
+            return $item->quantity * $item->product->customer_price * 0.15;
+        });
         return round($totalTax, 2);
-
     }
 
     protected function getTotalWithTaxAttribute(){

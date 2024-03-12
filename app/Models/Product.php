@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 
 class Product extends Model
@@ -33,6 +34,16 @@ class Product extends Model
         'pos_product',
         'picture'
     ];
+
+    protected $appends =['customer_price'];
+
+    protected function getCustomerPriceAttribute(){
+        $customer = $this->customers()->where('customer_id',auth()->id())->first();
+        if ($customer){
+            return $customer->pivot->price;
+        }
+        return $this->buying_price;
+    }
 
     public function category(){
         return $this->belongsTo(Category::class);
