@@ -17,7 +17,7 @@ class StatisticController extends Controller
      */
     public function index()
     {
-        $currentYear = '2023';
+        $currentYear = now()->year;
 
         $customer = auth('customer')->user();
 
@@ -41,7 +41,7 @@ class StatisticController extends Controller
     private function processInvoicesData($statistics,$currentYear)
     {
         $statisticsData = [];
-        $year = now()->year;
+        $year = $currentYear;
 
         foreach ($statistics as $month => $statistic) {
 
