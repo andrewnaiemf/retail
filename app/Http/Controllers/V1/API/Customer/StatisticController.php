@@ -51,7 +51,7 @@ class StatisticController extends Controller
 
             if (!isset($statisticsData[$year][$month])) {
                 $statisticsData[$year][$month] = [
-                    'total_amount' => 0,
+                    'total_due_amount' => 0,
                     'total_paid_amount' => 0,
                 ];
             }
@@ -59,7 +59,7 @@ class StatisticController extends Controller
                 $modelName = class_basename(get_class($item->first()));
 
                 if ($modelName == 'Invoice'){
-                    $statisticsData[$year][$month]['total_amount'] += $item->total;
+                    $statisticsData[$year][$month]['total_due_amount'] += $item->total;
 
                 }
                 if ($modelName == 'Receipt'){
