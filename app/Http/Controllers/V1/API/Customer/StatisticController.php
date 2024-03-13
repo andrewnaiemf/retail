@@ -41,9 +41,9 @@ class StatisticController extends Controller
     private function processInvoicesData($statistics,$currentYear)
     {
         $statisticsData = [];
+        $year = now()->year;
 
         foreach ($statistics as $month => $statistic) {
-            $year = 'Year';
 
             if (!isset($statisticsData[$year])) {
                 $statisticsData[$year] = [];
