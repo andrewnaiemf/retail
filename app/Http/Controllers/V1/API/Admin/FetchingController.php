@@ -256,7 +256,7 @@ class FetchingController extends Controller
 
                 foreach ($invoice_data['line_items'] as $item) {
 
-                    $item['discount'] = $item['discount_amount'];
+                    $item->discount = $item->discount_amount;
                     $product = Product::find($item->product_id);
                     if ( $product ) {
                         $item = (array)$item;
