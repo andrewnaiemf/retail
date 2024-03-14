@@ -23,7 +23,7 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->header('per_page') ?? 10;
-        $orders = QueryBuilder::for(Order::class)->with(['orderItems','driver'])
+        $orders = QueryBuilder::for(Order::class)->with(['orderItems.product','driver','customer'])
             ->allowedFilters(
                 AllowedFilter::custom('status', new FiltersOrders)
             )
@@ -61,7 +61,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        $order = Order::with(['orderItems','driver'])->findOrFail($id);
+        $order = Order::with(['orderItems.product','driver','customer'])->findOrFail($id);
 
         return $this->returnData($order);
     }
