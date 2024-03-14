@@ -250,7 +250,7 @@ class FetchingController extends Controller
         if (!empty($invoice_data['line_items'])) {
             $lineItems = [];
 
-            if ($invoice->lineItems->isEmpty()) {
+//            if ($invoice->lineItems->isEmpty()) {
 
                 foreach ($invoice_data['line_items'] as $item) {
 
@@ -267,9 +267,9 @@ class FetchingController extends Controller
                 }
 
                 $invoice->lineItems()->saveMany($lineItems);
-            }else{
-                ///////// handle update invoice.
-            }
+//            }else{
+//                ///////// handle update invoice.
+//            }
 
         }
     }
