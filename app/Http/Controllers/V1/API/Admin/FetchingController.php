@@ -249,9 +249,7 @@ class FetchingController extends Controller
 
         if (!empty($invoice_data['line_items'])) {
             $lineItems = [];
-            if ($invoice->id == 1314){
-                dd(1314,$invoice_data);
-            }
+
             if ($invoice->lineItems->isEmpty()) {
 
                 foreach ($invoice_data['line_items'] as $item) {
