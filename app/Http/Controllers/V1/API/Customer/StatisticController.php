@@ -81,8 +81,8 @@ class StatisticController extends Controller
             }
             ksort($yearData); // Sort months in ascending order
         }
-        if (isset($statisticsData)){
-            $statisticsData[$year] = array_values($statisticsData[$year]); // Convert Year to indexed array
+        if (isset($statisticsData) && ! empty($statisticsData)){
+            $statisticsData[$year] = array_values($statisticsData['Year']); // Convert Year to indexed array
 
         }
 
