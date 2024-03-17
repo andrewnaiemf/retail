@@ -120,6 +120,20 @@ class ProductController extends Controller
         return $this->returnSuccessMessage('Products attached to customer successfully');
     }
 
+
+    public function detachProductFromCustomer($customerId, $productId)
+    {
+        $customer = Customer::findOrFail($customerId);
+        $customer = Product::findOrFail($productId);
+
+        \DB::table('customer_product')
+            ->where('customer_id', $customerId)
+            ->where('product_id', $productId)
+            ->update(['deleted_at' => now()]);
+
+        return $this->returnSuccessMessage('Product detached from customer successfully');
+    }
+
     public function attachPicture(Request $request, $id){
 
         $validator = Validator::make($request->all(), [

@@ -48,6 +48,8 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::resource('receipts', ReceiptController::class);
 
         Route::put('customer/products', [ProductController::class, 'storeProductsForCustomer']);
+        Route::delete('customer/{customerId}/products/{productId}', [ProductController::class, 'detachProductFromCustomer']);
+
         Route::resource('products', ProductController::class);
         Route::post('product-picture/{id}', [ProductController::class, 'attachPicture']);
 
