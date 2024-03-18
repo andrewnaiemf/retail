@@ -93,10 +93,10 @@ class ProductController extends Controller
             return $this->returnError(422, 'invalid customer id');
         }
 
-        foreach ($request->products as $productData) {
+//        foreach ($request->products as $productData) {
 
-            $productId = $productData['id'];
-            $price = $productData['price'];
+            $productId = $request['id'];
+            $price = $request['price'];
 
             $product = Product::find($productId);
 
@@ -106,15 +106,12 @@ class ProductController extends Controller
                 // Check if the relationship exists
                 if (!$customer->products->contains($productId)) {
                     $pivotData['created_at'] = now();
+                    $customer->products()->attach([$productId => $pivotData]);
+                }else{
+                    $pivotData['updated_at'] = now();
+                     $customer->products()->sync([$productId => $pivotData], false);
                 }
-
-                // Always update updated_at
-                $pivotData['updated_at'] = now();
-
-//              $customer->products()->sync([$productId => $pivotData], false);
-                $customer->products()->attach([$productId => $pivotData]);
-
-            }
+//            }
         }
 
         return $this->returnSuccessMessage('Products attached to customer successfully');

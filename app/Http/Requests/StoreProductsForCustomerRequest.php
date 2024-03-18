@@ -29,9 +29,8 @@ class StoreProductsForCustomerRequest extends FormRequest
     {
         return [
             'customer' => 'required|exists:users,id',
-            'products' => 'required|array',
-            'products.*.id' => 'required|exists:products,id',
-            'products.*.price' => 'required|numeric',
+            'id' => 'required|exists:products,id',
+            'price' => 'required|numeric',
         ];
     }
 
