@@ -235,13 +235,33 @@ class FetchingController extends Controller
 
     public function updateOrCreateInvoices($qoyoud_data)
     {
+        $customers_id = Customer::pluck('id')->toArray();
 
         foreach ($qoyoud_data as $invoice_data) {
-            $invoice_data = (array)$invoice_data;
 
-            $invoice = Invoice::updateOrCreate(['id' => $invoice_data['id']], $invoice_data);
+            if ($invoice_data->contact_id ){
+                if (!in_array($invoice_data->contact_id, $customers_id)) {
+                    try {
 
-            $this->attachLineItems($invoice, $invoice_data);
+                        $response = Http::withHeaders([
+                            'API-KEY' => $this->apiKey,
+                        ])->get($this->baseUrl . 'customers');
+
+                        $responseData = json_decode($response->body());
+
+                        $this->storeData('customers', $responseData->customers);
+                        Log::info('Successfully fetched data from Qoyod API: customers');
+                    }catch (\Exception $e) {dd('adddd');
+
+                        Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
+
+                        return $this->returnError( 422,'Failed to fetch data from Qoyod API ' . $e->getMessage());
+                    }
+                }
+            }
+            $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
+
+            $this->attachLineItems($invoice, (array)$invoice_data);
         }
     }
 
@@ -250,7 +270,7 @@ class FetchingController extends Controller
         if (!empty($invoice_data['line_items'])) {
             $lineItems = [];
 
-//            if ($invoice->lineItems->isEmpty()) {
+            if ($invoice->lineItems->isEmpty()) {
 
                 foreach ($invoice_data['line_items'] as $item) {
 
@@ -267,9 +287,9 @@ class FetchingController extends Controller
                 }
 
                 $invoice->lineItems()->saveMany($lineItems);
-//            }else{
-//                ///////// handle update invoice.
-//            }
+            }else{
+                ///////// handle update invoice.
+            }
 
         }
     }
