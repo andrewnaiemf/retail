@@ -47,7 +47,7 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-        $invoice = Invoice::with(['payments', 'inventory', 'contact'])->findOrFail($id);
+        $invoice = Invoice::with(['payments', 'inventory', 'contact', 'lineItems.product'])->findOrFail($id);
 
         return $this->returnData($invoice);
     }
