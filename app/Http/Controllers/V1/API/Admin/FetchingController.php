@@ -251,7 +251,7 @@ class FetchingController extends Controller
 
                         $this->storeData('customers', $responseData->customers);
                         Log::info('Successfully fetched data from Qoyod API: customers');
-                    }catch (\Exception $e) {dd('adddd');
+                    }catch (\Exception $e) {
 
                         Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
 
