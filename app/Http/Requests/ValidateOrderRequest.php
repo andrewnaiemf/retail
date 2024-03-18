@@ -44,7 +44,7 @@ class ValidateOrderRequest extends FormRequest
             'line_items.*.product_id' => [
                 'required',
                 'exists:products,id',
-                new ValidateStock(),
+//                new ValidateStock(),
             ],
             'order.line_items.*.quantity' => 'required|numeric|min:1',
         ];

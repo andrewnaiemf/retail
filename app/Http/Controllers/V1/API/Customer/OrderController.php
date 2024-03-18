@@ -7,6 +7,7 @@ use App\Filter\FiltersOrdersByCustomer;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Customer;
+use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -67,8 +68,42 @@ class OrderController extends Controller
         $order = $this->createOrder($customer, $reference, $request);
 
         $this->createOrderItems($order, $modifiedLineItems);
+//        $this->reduceStock($modifiedLineItems);
+
         //TODO Notify whatsapp message to owner that he has new order from customer name.
         return response()->json(['message' => 'Order created successfully']);
+    }
+
+    public function reduceStock($items)
+    {
+        foreach ($items as $product) {
+            $productId = $product['product_id'];
+            $quantity = $product['quantity'];
+            $inventory = Inventory::find(1);
+            // Retrieve the inventory record for the product
+            $productInInventory = $inventory->products()->where('product_id', $productId)->first();
+
+            if ($productInInventory) {
+                // Ensure that the available quantity is greater than or equal to the quantity to be deducted
+                if ($productInInventory->pivot->stock>= $quantity) {
+                    // Deduct the quantity from the available stock
+                    $productInInventory->pivot->stock -= $quantity;
+                    $productInInventory->pivot->update(['stock'=> $productInInventory->pivot->stock]);
+                } else {
+                    // Handle the case where the available stock is insufficient
+                    // You may throw an exception, log a message, or handle it based on your application's logic
+                    // For example:
+                    // throw new Exception("Insufficient stock for product ID: $productId");
+                    // Log::error("Insufficient stock for product ID: $productId");
+                }
+            } else {
+                // Handle the case where the inventory record does not exist
+                // You may throw an exception, log a message, or handle it based on your application's logic
+                // For example:
+                // throw new Exception("Inventory record not found for product ID: $productId");
+                // Log::error("Inventory record not found for product ID: $productId");
+            }
+        }
     }
 
     private function modifyLineItems($customer, $lineItems)

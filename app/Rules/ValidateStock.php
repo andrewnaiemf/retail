@@ -5,7 +5,7 @@ namespace App\Rules;
 use App\Models\Product;
 use App\Traits\GeneralTrait;
 use Illuminate\Contracts\Validation\Rule;
-
+-
 class ValidateStock implements Rule
 {
     use GeneralTrait;
