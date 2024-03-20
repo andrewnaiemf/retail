@@ -20,6 +20,7 @@ class PushNotification
 
         switch ($screen) {
             case 'Dreaft':
+            case 'assignToDriver':
                 $message = $sender->name . ' ' . __('messages.new_order_messages');
                 $messageTemplateKey = 'new_order';
                 break;
@@ -46,7 +47,7 @@ class PushNotification
                 break;
             case 'Delivered':
                 $message = __('messages.your_order_delivered');
-                $messageTemplateKey = 'your_order_elivered';
+                $messageTemplateKey = 'your_order_delivered';
                 break;
 
             default:

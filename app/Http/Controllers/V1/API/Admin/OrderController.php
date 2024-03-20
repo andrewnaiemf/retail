@@ -27,6 +27,7 @@ class OrderController extends Controller
             ->allowedFilters(
                 AllowedFilter::custom('status', new FiltersOrders)
             )
+            ->orderBy('id', 'desc')
             ->paginate($per_page);
 
         return $this->returnData($orders);
@@ -142,6 +143,8 @@ class OrderController extends Controller
         $order->driver()->associate($driver);
 
         $order->save();
+        $sender_id = auth()->user()->id;
+        PushNotification::send($sender_id, $driver->id, $order, 'assignToDriver');
 
         return $this->returnSuccessMessage('driver attached to order successfully');
 
