@@ -56,4 +56,8 @@ class Order extends Model
     {
         return $this->belongsTo(Customer::class)->orderBy('id', 'desc');
     }
+
+    public function inventory(){
+        return $this->belongsTo(Inventory::class);
+    }
 }
