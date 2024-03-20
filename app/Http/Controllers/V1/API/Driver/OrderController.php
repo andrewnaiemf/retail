@@ -102,12 +102,11 @@ class OrderController extends Controller
             ]);
         }
 
-        $order->update(['shipping_status' => $request->status]);
-
         $sender_id = auth()->user()->id;
         if ($request->status){
-            PushNotification::send($sender_id, $order->customer_id, $order, $request->status);
+            $order->update(['shipping_status' => $request->status]);
 
+            PushNotification::send($sender_id, $order->customer_id, $order, $request->status);
         }
 
         return $this->returnSuccessMessage('Order updated successfully');
