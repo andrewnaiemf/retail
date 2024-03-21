@@ -25,7 +25,7 @@ class OrderController extends Controller
         $orders = QueryBuilder::for(Order::class)->with(['orderItems.product','customer','inventory'])
             ->allowedFilters(
                 AllowedFilter::custom('status', new FiltersDriverOrders)
-            )
+            )->orderBy('id', 'desc')
             ->simplePaginate($per_page);
 
         return $this->returnData($orders);
