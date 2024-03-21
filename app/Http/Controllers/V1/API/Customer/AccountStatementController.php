@@ -15,7 +15,7 @@ class AccountStatementController extends Controller
 {
     public function index(Request $request)
     {
-        $per_page = $request->header('per_page') ?? 10;
+        $per_page = $request->headers->get('per-page') ?? 10;
 
         $receipts = QueryBuilder::for(Receipt::class)->where('contact_id', $request->branch_id)
         ->allowedFilters([

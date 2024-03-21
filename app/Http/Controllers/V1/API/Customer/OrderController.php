@@ -23,7 +23,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->header('per_page') ?? 10;
+        $per_page = $request->headers->get('per-page') ?? 10;
         $customer = auth('customer')->user();
 
         $query = QueryBuilder::for(Order::class)->whereHas('customer', function ($q) use ($customer)

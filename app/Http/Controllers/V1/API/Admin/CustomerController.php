@@ -17,7 +17,7 @@ class CustomerController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->header('per_page') ?? 10;
+        $per_page = $request->headers->get('per-page') ?? 10;
         $customers = QueryBuilder::for(Customer::class)->with(['billingAddress','shippingAddress'])
             ->allowedFilters(['name', 'status'])->whereRoleIs('user')
             ->paginate($per_page);

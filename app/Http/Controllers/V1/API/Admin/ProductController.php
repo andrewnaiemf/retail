@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->header('per_page') ?? 10;
+        $per_page = $request->headers->get('per-page') ?? 10;
 
         $products = QueryBuilder::for(Product::class)
             ->allowedFilters(
