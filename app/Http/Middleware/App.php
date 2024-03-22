@@ -19,7 +19,7 @@ class App
     public function handle(Request $request, Closure $next)
     {
         if ( $request->is('api/*') ) {
-            $lang = $request->header('locale') ?? 'en' ;
+            $lang = $request->header('locale') ?? 'ar' ;
             app()->setLocale( $lang ) ;
             $request->headers->set('Accept', 'application/json');
         }
