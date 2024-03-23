@@ -23,10 +23,17 @@ class ProductController extends Controller
         $per_page = $request->headers->get('per-page') ?? 10;
 
         $customer = auth('customer')->user();
-        $query = QueryBuilder::for(Product::class)->with('customers','tax')->whereHas('customers', function ($q) use ($customer){
+        $query = QueryBuilder::for(Product::class)
+            ->with(['customers' => function ($query) use ($customer) {
+                $query->where('customer_product.customer_id', $customer->id)
+                    ->whereNull('customer_product.deleted_at');
+            }])
+            ->whereHas('customers', function ($query) use ($customer) {
+                $query->where('customer_product.customer_id', $customer->id);
+                $query->whereNull('customer_product.deleted_at');
 
-                $q->where('customer_product.customer_id', $customer->id);
-        });
+            })
+            ->with('tax');
 
         if (isset($request['filter']['name']) && $request['filter']['name']) {
             $query->allowedFilters(
