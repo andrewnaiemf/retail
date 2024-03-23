@@ -41,7 +41,7 @@ class AuthController extends Controller
         if (!$driver) {
             return $this->unauthorized();
         }
-
+        $driver->update(['locale' => 'ar']);
         $token = JWTAuth::fromUser($driver);
         $this->device_token($request->device_token, $driver);
 
