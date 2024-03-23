@@ -44,7 +44,8 @@ class AccountStatementController extends Controller
             return $receipt;
         });
 
-        $result = $receipts->merge($invoices);
+//        $result = ->merge($invoices);
+        $result = $invoices->merge($receipts);
         $result = $result->sortBy('date');
         $result = $result->values();
 
