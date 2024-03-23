@@ -19,13 +19,13 @@ class StartsBetweenFilter implements Filter
         if ($modelName == 'Invoice'){
             $query->where('invoices.contact_id', auth('customer')->user()->id)
                 ->where(function (Builder $query) use ($start , $end) {
-                    $query->whereBetween('created_at', [$start, $end]);
+                    $query->whereBetween('issue_date', [$start, $end]);
                 })->with(['contact']);
         }else{
             $query->whereHas('account', function ($q) use ($start , $end) {
                 $q->where('receipts.contact_id', auth('customer')->user()->id)
                     ->where(function (Builder $query) use ($start , $end) {
-                        $query->whereBetween('created_at', [$start, $end]);
+                        $query->whereBetween('date', [$start, $end]);
                     });
             })->with(['contact']);
         }

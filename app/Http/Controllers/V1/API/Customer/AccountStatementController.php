@@ -45,7 +45,7 @@ class AccountStatementController extends Controller
         });
 
         $result = $receipts->merge($invoices);
-        $result = $result->sortByDesc('created_at');
+        $result = $result->sortBy('date');
         $result = $result->values();
 
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
