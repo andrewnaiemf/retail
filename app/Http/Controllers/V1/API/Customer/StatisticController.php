@@ -32,7 +32,11 @@ class StatisticController extends Controller
             ->get();
 
         $results = $invoiceData->concat($receiptData)->groupBy('month');
-
+        // Check if there are any results
+        if ($results->isEmpty()) {
+            // If no results, return empty data structure
+            return response()->json(['data' => $this->getEmptyStatisticsData()]);
+        }
 
         $statisticsData = $this->processInvoicesData($results,$currentYear);
         return response()->json(['data' => $statisticsData]);
@@ -87,6 +91,22 @@ class StatisticController extends Controller
         }
 
         return $statisticsData;
+    }
+
+    private function getEmptyStatisticsData()
+    {
+        $emptyData = [];
+        $year = 'Year';
+        $allMonths = range(1, 12);
+
+        foreach ($allMonths as $month) {
+            $emptyData[$year][$month] = [
+                'total_due_amount' => 0,
+                'total_paid_amount' => 0,
+            ];
+        }
+        $emptyData = array_values($emptyData['Year']);
+        return $emptyData;
     }
 
 
