@@ -134,6 +134,8 @@ class Customer extends Authenticatable implements JWTSubject
         $branches = null ;
         if ($this->tax_number) {
             $branches = User::where('tax_number', $this->tax_number)->get();
+        }else{
+            $branches = User::where('id', $this->id)->get();
         }
         return  $branches;
     }
