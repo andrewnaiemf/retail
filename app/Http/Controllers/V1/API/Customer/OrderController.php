@@ -65,7 +65,7 @@ class OrderController extends Controller
         $modifiedLineItems = $this->modifyLineItems($customer, $lineItems);
 
         $reference = $this->generateOrderReference();
-        $order = $this->createOrder($customer, $reference, $request);
+        $order = $this->createOrder($customer, $reference, $orderData);
 
         $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
@@ -134,15 +134,15 @@ class OrderController extends Controller
         return 'order' . ($lastOrderId + 1);
     }
 
-    private function createOrder($customer, $reference, $request)
+    private function createOrder($customer, $reference, $orderData)
     {
         return Order::create([
             'customer_id' => $customer->id,
             'inventory_id' => 1,
             'reference' => $reference,
             'status' => 'Draft',
-            'notes' => $request->notes,
-            'location' => $request->location,
+            'notes' => $orderData['notes'],
+            'location' => $orderData['location'],
             'created_at' => now(),
         ]);
     }
