@@ -26,7 +26,7 @@ class PushNotification
                 break;
             case 'Declined':
                 $message = __('messages.your_order_declined');
-                $messageTemplateKey = 'your_order_declined ';
+                $messageTemplateKey = 'your_order_declined';
                 break;
             case 'Approved':
                 $message = __('messages.your_order_approved');
