@@ -36,7 +36,7 @@ class Notification extends Model
     protected function generateMessage($messageTemplateKey, $sender, $data)
     {
         $message = '';
-        $currentLanguage = auth()->user()->locale ?? 'en';
+        $currentLanguage = auth()->user()->locale ?? 'ar';
         app()->setLocale($currentLanguage);
 
         $message = __('messages.' . $messageTemplateKey, []);
