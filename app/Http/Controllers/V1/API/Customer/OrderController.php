@@ -142,6 +142,7 @@ class OrderController extends Controller
             'reference' => $reference,
             'status' => 'Draft',
             'notes' => $request->notes,
+            'location' => $request->location,
             'created_at' => now(),
         ]);
     }
