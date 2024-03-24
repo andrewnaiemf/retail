@@ -105,7 +105,7 @@ class StatisticController extends Controller
                 'total_paid_amount' => 0,
             ];
         }
-        $emptyData = array_values($emptyData['Year']);
+        $emptyData['Year'] = array_values($emptyData['Year']);
         return $emptyData;
     }
 
