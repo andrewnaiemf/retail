@@ -85,7 +85,7 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\ValidateOrderRequest
      */
-    public function update(ValidateOrderRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $errors = [];
         $order = Order::find($id);
