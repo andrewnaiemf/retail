@@ -38,8 +38,11 @@ class Notification extends Model
         $message = '';
         $currentLanguage = auth()->user()->locale ?? 'ar';
         app()->setLocale($currentLanguage);
-
-        $message = __('messages.' . $messageTemplateKey, []);
+        if ($messageTemplateKey == 'new_order_messages'){
+            $message = $sender['name'] . __('messages.' . $messageTemplateKey, []);
+        }else{
+            $message = __('messages.' . $messageTemplateKey, []);
+        }
 
         return $message;
     }

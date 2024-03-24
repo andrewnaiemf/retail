@@ -22,7 +22,7 @@ class PushNotification
             case 'Draft':
             case 'assignToDriver':
                 $message = $sender->name . ' ' . __('messages.new_order_messages');
-                $messageTemplateKey = 'new_order';
+                $messageTemplateKey = 'new_order_messages';
                 break;
             case 'Declined':
                 $message = __('messages.your_order_declined');
