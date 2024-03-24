@@ -11,7 +11,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'customer_id', 'driver_id', 'shipping_status', 'reference', 'status', 'inventory_id', 'notes', 'terms_conditions', 'confirmation_image'
+        'customer_id', 'driver_id', 'shipping_status', 'reference', 'status', 'inventory_id', 'notes', 'terms_conditions', 'confirmation_image', 'location'
     ];
 
     public function toArray()
@@ -40,7 +40,8 @@ class Order extends Model
     protected function getTotalAttribute(){
         return $this->orderItems->sum(function ($item) {
             return $item->quantity * $item->product->customer_price;
-        });    }
+        });
+    }
 
 
     public function orderItems()

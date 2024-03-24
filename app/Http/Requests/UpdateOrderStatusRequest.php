@@ -33,7 +33,7 @@ class UpdateOrderStatusRequest extends FormRequest
             'confirmation_image' =>  [
                 'image',
 //                'dimensions:min_width=100,min_height=100,max_width=1920,max_height=1080',
-                'max:20480'
+//                'max:20480'
             ]
         ];
     }
