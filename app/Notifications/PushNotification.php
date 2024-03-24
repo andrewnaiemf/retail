@@ -13,13 +13,13 @@ class PushNotification
         $reciever = User::find($resciever_id);
         $sender = User::find($sender_id);
 
-        $recieverLocale = $reciever->lng;
+        $recieverLocale = $reciever->locale;
         app()->setLocale($recieverLocale);
 
         $messageTemplateKey = '';
 
         switch ($screen) {
-            case 'Dreaft':
+            case 'Draft':
             case 'assignToDriver':
                 $message = $sender->name . ' ' . __('messages.new_order_messages');
                 $messageTemplateKey = 'new_order';
