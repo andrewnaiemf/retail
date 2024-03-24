@@ -109,6 +109,7 @@ class ProductController extends Controller
                     $customer->products()->attach([$productId => $pivotData]);
                 }else{
                     $pivotData['updated_at'] = now();
+                    $pivotData['deleted_at'] = null;
                      $customer->products()->sync([$productId => $pivotData], false);
                 }
 //            }
