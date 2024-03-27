@@ -13,7 +13,7 @@ trait GeneralTrait
     }
 
     public function returnError($code = 422, $msg )
-    {dd($code);
+    {
         return response()->json([
             'status' => false,
             'msg' => is_array($msg) ? implode(', ', $msg) : $msg
