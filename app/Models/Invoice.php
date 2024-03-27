@@ -41,8 +41,9 @@ class Invoice extends Model
 
     public function getOwnerAttribute() //owner
     {
-        $owner = User::whereRoleIs('administrator')->with('shippingAddress')->first();
-        $owner->commercial_registration_number = '1010839238';
+//        $owner = User::whereRoleIs('administrator')->with('shippingAddress')->first();
+//        $owner->commercial_registration_number = '1010839238';
+        $owner = Customer::find($this->contact_id);
         return $owner;
     }
 
