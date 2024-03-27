@@ -29,7 +29,7 @@ class OrderController extends Controller
         $query = QueryBuilder::for(Order::class)->whereHas('customer', function ($q) use ($customer)
         {
             $q->where('id', $customer->id);
-        })->with(['orderItems.product', 'driver', 'customer'])->latest();;
+        })->with(['orderItems.product', 'driver', 'customer'])->latest();
 
         if (isset($request['filter']['status']) && $request['filter']['status']) {
            $query->allowedFilters(
