@@ -106,7 +106,7 @@ class OrderController extends Controller
         }
 
         if ($errors) {
-            return $this->returnError(422, $errors);
+            return $this->returnError(428, $errors);
         }
 
         return $this->returnSuccessMessage('order updated successfully');
