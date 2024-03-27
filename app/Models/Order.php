@@ -28,7 +28,7 @@ class Order extends Model
 
     protected function getTotalTaxAttribute(){
         $totalTax = $this->orderItems->sum(function ($item) {
-            return $item->quantity * $item->product->customer_price * 0.15;
+            return $item->quantity * $item->unit_price * 0.15;
         });
         return round($totalTax, 2);
     }
@@ -39,7 +39,7 @@ class Order extends Model
 
     protected function getTotalAttribute(){
         return $this->orderItems->sum(function ($item) {
-            return $item->quantity * $item->product->customer_price;
+            return $item->quantity * $item->unit_price;
         });
     }
 
