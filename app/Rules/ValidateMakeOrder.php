@@ -33,7 +33,7 @@ class ValidateMakeOrder implements Rule
         }
         $overdue = auth('customer')->user()->overdue;
         if ($overdue && $overdue > 0) {
-            return $this->returnValidationError(422, 'can not make order before pay overdue  invoices');
+            return $this->returnValidationError(428, 'can not make order before pay overdue  invoices');
         }
         return true;
     }
