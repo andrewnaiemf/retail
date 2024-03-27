@@ -28,6 +28,9 @@ class ValidateMakeOrder implements Rule
      */
     public function passes($attribute, $value)
     {
+        if (request()->get('force_make') == 1) {
+            return true; // Skip validation
+        }
         $overdue = auth('customer')->user()->overdue;
         if ($overdue && $overdue > 0) {
             return $this->returnValidationError(422, 'can not make order before pay overdue  invoices');

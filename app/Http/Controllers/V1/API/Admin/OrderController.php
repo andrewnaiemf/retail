@@ -91,17 +91,18 @@ class OrderController extends Controller
         $order = Order::find($id);
         foreach ($request['line_items'] as $index => $lineItem) {
 
-                $existingOrderItem = $order->orderItems()->where('product_id', $lineItem['product_id'])->first();
-
-            if ($existingOrderItem) {
-                $existingOrderItem->update([
-                    'quantity' => $lineItem['quantity'],
-                ]);
-
+            $existingOrderItem = $order->orderItems()->where('product_id', $lineItem['product_id'])->first();
+            if ($lineItem['quantity'] > 0){
+                if ($existingOrderItem) {
+                    $existingOrderItem->update([
+                        'quantity' => $lineItem['quantity'],
+                    ]);
+                }else{
+                    $errors[$index] = sprintf("The selected line_items %d product_id is invalid", $index);
+                }
             }else{
-                $errors[$index] = sprintf("The selected line_items %d product_id is invalid", $index);
+                $existingOrderItem->delete();
             }
-
         }
 
         if ($errors) {
