@@ -7,13 +7,13 @@ use Twilio\Rest\Client;
 class WhatsappNotification
 {
 
-    public function sendWhatsAppMessage()
+    public static function sendWhatsAppMessage()
     {
         $twilioSid = config('app.twilio_sid');
         $twilioToken = config('app.twilio_auth_token');
-        $twilioWhatsAppNumber = 'whatsapp:+14155238886';
-        $recipientNumber = 'whatsapp:+201274696869';
-        $message = "Hello from Twilio 🚀";
+        $twilioWhatsAppNumber = 'whatsapp:+20106976266';
+        $recipientNumber = 'whatsapp:+20106976266';
+        $message = "You have new order";
 
         $twilio = new Client($twilioSid, $twilioToken);
 

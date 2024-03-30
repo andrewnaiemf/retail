@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\User;
+use App\Notifications\WhatsappNotification;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -69,7 +70,7 @@ class OrderController extends Controller
 
         $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
-
+        WhatsappNotification::sendWhatsAppMessage();
         //TODO Notify whatsapp message to owner that he has new order from customer name.
         return response()->json(['message' => 'Order created successfully']);
     }
