@@ -96,7 +96,7 @@ class PushNotification
             "registration_ids" =>$devs,
             "notification" => [
                 "body" => $message,
-                "title" => 'Drive Shild',
+                "title" => 'DES',
                 "sound" => "notify.mp3",
                 "tag" => "notification"
             ],
