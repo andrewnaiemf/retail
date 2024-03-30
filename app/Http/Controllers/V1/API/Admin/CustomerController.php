@@ -62,8 +62,8 @@ class CustomerController extends Controller
             return $this->returnError(422, 'invalid customer id');
         }
 
-        $invoices = $customer->invoices()->paginate(10);
-        $receipts = $customer->receipts()->paginate(10);
+        $invoices = $customer->invoices()->orderBy('id', 'desc')->paginate(10);
+        $receipts = $customer->receipts()->orderBy('id', 'desc')->paginate(10);
 
 
         return $this->returnData(['customer' => $customer,'invoices' => $invoices,'receipts' => $receipts]);
