@@ -70,8 +70,10 @@ class OrderController extends Controller
 
         $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
-        WhatsappNotification::sendWhatsAppMessage();
-        //TODO Notify whatsapp message to owner that he has new order from customer name.
+        $message = "You have a new order from $customer->name";
+        $admin_phone = User::first()->phone_number;
+        WhatsappNotification::sendWhatsAppMessage($message, $admin_phone);
+
         return response()->json(['message' => 'Order created successfully']);
     }
 

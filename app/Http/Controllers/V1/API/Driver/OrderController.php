@@ -6,8 +6,10 @@ use App\Filter\FiltersDriverOrders;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\ValidateOrderRequest;
+use App\Models\Customer;
 use App\Models\Order;
 use App\Notifications\PushNotification;
+use App\Notifications\WhatsappNotification;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -84,6 +86,7 @@ class OrderController extends Controller
     public function updateOrder(UpdateOrderStatusRequest $request, $id)
     {
         $order = Order::findOrFail($id);
+        $customer  = Customer::findOrFail($order->customer_id);
         $confirmation_image = request()->file('confirmation_image');
         $path = 'orders/' . $id . '/';
 
@@ -104,6 +107,14 @@ class OrderController extends Controller
 
         $sender_id = auth()->user()->id;
         if ($request->status){
+            if ( $request->status == 'Delivered') {
+                $message = "لقد وصل الطلب الخاص بك";
+                $customer_number = $customer->phone_number;
+                if (!$customer_number){
+                    WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
+                }
+                WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+            }
             $order->update(['shipping_status' => $request->status]);
 
             PushNotification::send($sender_id, $order->customer_id, $order, $request->status);
