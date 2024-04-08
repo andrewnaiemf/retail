@@ -19,6 +19,7 @@ class ReceiptController extends Controller
         $customer = auth('customer')->user();
         $receipts = Receipt::where('contact_id', $customer->id)
             ->with(['contact', 'account', 'allocates.allocatee'])
+            ->orderBy('id', 'desc')
             ->simplePaginate($per_page);
 
         return $this->returnData($receipts);

@@ -19,6 +19,7 @@ class InvoiceController extends Controller
         $customer = auth('customer')->user();
         $invoice = Invoice::where('contact_id', $customer->id)
         ->with(['payments', 'inventory', 'contact', 'lineItems.product'])
+        ->orderBy('id', 'desc')
         ->simplePaginate($per_page);
 
         return $this->returnData($invoice);
