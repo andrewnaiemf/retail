@@ -79,7 +79,7 @@ class PushNotification
     public static function push($reciever, $screen, $message, $notification_data = null, $type = null)
     {
         $url = 'https://fcm.googleapis.com/fcm/send';
-        $serverKey = env('FCM_KEY') ?? 'AAAAL0bEpHc:APA91bGpWb6PKtV-nkZK29NyvcH6ZexuIcCKKLI4LPkvvuy6eIThjI3Kog3DD_ppCg8x6gMXHD5m7AvehD10qRTzVzt8GheE0oqBYIM2Gn86Ugm3Iap7ay5PRofCpwTZu3AfaTvsuAwd';
+        $serverKey = config('app.FCM_KEY');
         $devs=[];
         $devices = $reciever->device_token;
         foreach ($devices as $tokens) {

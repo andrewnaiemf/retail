@@ -62,6 +62,10 @@ return [
 
     'twilio_whatsapp_number' => env('TWILIO_WHATSAPP_NUMBER', null),
 
+    'API_KEY' => env('API_KEY', null),
+
+    'FCM_KEY' => env('FCM_KEY', null),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

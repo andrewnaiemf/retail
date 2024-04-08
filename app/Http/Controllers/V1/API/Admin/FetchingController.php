@@ -19,6 +19,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class FetchingController extends Controller
 {
@@ -28,7 +29,7 @@ class FetchingController extends Controller
 
     public function __construct()
     {
-        $this->apiKey = env('API_KEY', '4710f93567073fb98566ffafc');
+        $this->apiKey = config('app.API_KEY');
         $this->baseUrl = 'https://www.qoyod.com/api/' . self::API_VERSION . '/';
     }
 
@@ -258,6 +259,40 @@ class FetchingController extends Controller
                         return $this->returnError( 422,'Failed to fetch data from Qoyod API ' . $e->getMessage());
                     }
                 }
+            }
+
+            try {
+                $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
+
+                if (!Storage::disk('public')->exists($path)) {
+
+                    $response = Http::withHeaders([
+                        'API-KEY' => $this->apiKey,
+                    ])->get($this->baseUrl . '/invoices/'. $invoice_data->id . '/pdf');
+
+                    $responseData = json_decode($response->body());
+
+                    $response = Http::get($responseData->pdf_file);
+                    $path = 'invoices/pdf/' . $invoice_data->id . '/';
+
+                    if ($response->ok()) {
+                        Storage::disk('public')->put($path.'invoice.pdf', $response->body());
+                        Log::info('PDF downloaded and stored successfully.');
+                    } else {
+                        Log::info('Failed to download PDF.');
+                    }
+
+                    $invoice_data->pdf = $path.'invoice.pdf';
+
+                    Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
+                } else {
+                    Log::info('PDF already exists in storage. Skipping download.');
+                }
+
+            }
+            catch (\Exception $e) {
+                Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
+//                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
             }
             $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
 
