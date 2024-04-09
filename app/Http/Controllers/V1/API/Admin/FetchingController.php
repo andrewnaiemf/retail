@@ -300,15 +300,15 @@ class FetchingController extends Controller
             if ($invoice->wasRecentlyCreated)
             {
                 $customer  = Customer::findOrFail($invoice->contact_id);
-                $message = "تم اصدار فاتورة جديدة رقمها {{1}} بأجملي {{2}}.";
+                $message = 'تم اصدار فاتورة جديدة رقمها المرجعي {{1}} بقيمة {{2}}.';
                 $message = str_replace('{{1}}', $invoice->reference, $message);
                 $message = str_replace('{{2}}', $invoice->total, $message);
 
                 $customer_number = $customer->phone_number;
-                if (!$customer_number){
+//                if (!$customer_number){
                     WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-                }
-                WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+//                }
+//                WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
             }
 
             $this->attachLineItems($invoice, (array)$invoice_data);
@@ -359,16 +359,16 @@ class FetchingController extends Controller
                 {
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
                     if ($receipt->wasRecentlyCreated) {
-                        $message = 'تم اصدار سند جديد برقم {{1}} بأجملي {{2}}.';
+                        $message =  'تم اصدار سند جديد رقمه المرجعي {{1}} بقيمة {{2}}.';
 
                         $message = str_replace('{{1}}', $receipt->reference, $message);
                         $message = str_replace('{{2}}', $receipt->total, $message);
 
                         $customer_number = $customer->phone_number;
-                        if (!$customer_number){
+//                        if (!$customer_number){
                             WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-                        }
-                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+//                        }
+//                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
                     }
                     $this->attachAllocates($receipt, $receiptse_data['allocations']);
                 }else{
