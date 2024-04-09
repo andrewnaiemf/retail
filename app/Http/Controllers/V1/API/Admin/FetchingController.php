@@ -16,6 +16,7 @@ use App\Models\Role;
 use App\Models\ShippingAddress;
 use App\Models\UnitType;
 use App\Models\User;
+use App\Notifications\WhatsappNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -240,7 +241,7 @@ class FetchingController extends Controller
 
         foreach ($qoyoud_data as $invoice_data) {
 
-            if ($invoice_data->contact_id ){
+            if ($invoice_data->contact_id) {
                 if (!in_array($invoice_data->contact_id, $customers_id)) {
                     try {
 
@@ -252,11 +253,11 @@ class FetchingController extends Controller
 
                         $this->storeData('customers', $responseData->customers);
                         Log::info('Successfully fetched data from Qoyod API: customers');
-                    }catch (\Exception $e) {
+                    } catch (\Exception $e) {
 
                         Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
 
-                        return $this->returnError( 422,'Failed to fetch data from Qoyod API ' . $e->getMessage());
+                        return $this->returnError(422, 'Failed to fetch data from Qoyod API ' . $e->getMessage());
                     }
                 }
             }
@@ -268,7 +269,7 @@ class FetchingController extends Controller
 
                     $response = Http::withHeaders([
                         'API-KEY' => $this->apiKey,
-                    ])->get($this->baseUrl . '/invoices/'. $invoice_data->id . '/pdf');
+                    ])->get($this->baseUrl . '/invoices/' . $invoice_data->id . '/pdf');
 
                     $responseData = json_decode($response->body());
 
@@ -276,13 +277,13 @@ class FetchingController extends Controller
                     $path = 'invoices/pdf/' . $invoice_data->id . '/';
 
                     if ($response->ok()) {
-                        Storage::disk('public')->put($path.'invoice.pdf', $response->body());
+                        Storage::disk('public')->put($path . 'invoice.pdf', $response->body());
                         Log::info('PDF downloaded and stored successfully.');
                     } else {
                         Log::info('Failed to download PDF.');
                     }
 
-                    $invoice_data->pdf = $path.'invoice.pdf';
+                    $invoice_data->pdf = $path . 'invoice.pdf';
 
                     Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
                 } else {
@@ -295,6 +296,20 @@ class FetchingController extends Controller
 //                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
             }
             $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
+
+            if ($invoice->wasRecentlyCreated)
+            {
+                $customer  = Customer::findOrFail($invoice->contact_id);
+                $message = "تم اصدار فاتورة جديدة رقمها {{1}} بأجملي {{2}}.";
+                $message = str_replace('{{1}}', $invoice->reference, $message);
+                $message = str_replace('{{2}}', $invoice->total, $message);
+
+                $customer_number = $customer->phone_number;
+                if (!$customer_number){
+                    WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
+                }
+                WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+            }
 
             $this->attachLineItems($invoice, (array)$invoice_data);
         }
@@ -343,7 +358,18 @@ class FetchingController extends Controller
                 if ( $account)
                 {
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
+                    if ($receipt->wasRecentlyCreated) {
+                        $message = 'تم اصدار سند جديد برقم {{1}} بأجملي {{2}}.';
 
+                        $message = str_replace('{{1}}', $receipt->reference, $message);
+                        $message = str_replace('{{2}}', $receipt->total, $message);
+
+                        $customer_number = $customer->phone_number;
+                        if (!$customer_number){
+                            WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
+                        }
+                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+                    }
                     $this->attachAllocates($receipt, $receiptse_data['allocations']);
                 }else{
                     /////// return error message you should fetch products recently added
