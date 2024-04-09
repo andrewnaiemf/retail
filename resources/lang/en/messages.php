@@ -3,6 +3,7 @@
 return [
 
     'new_order_messages' => ':sender_name make new order ',
+    'reassign_order_messages' => 'reassign a new order to You',
     'your_order_declined' => 'Your order is declined',
     'your_order_approved' => 'Your order is approved',
     'your_order_processing' => 'Your order is processing',

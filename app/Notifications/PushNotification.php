@@ -49,7 +49,10 @@ class PushNotification
                 $message = __('messages.your_order_delivered');
                 $messageTemplateKey = 'your_order_delivered';
                 break;
-
+            case 'reassignToDriver':
+                $message = $sender->name . ' ' . __('messages.reassign_order_messages');
+                $messageTemplateKey = 'reassign_order_messages';
+                break;
             default:
                 $message = '';
                 break;

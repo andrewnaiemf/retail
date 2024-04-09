@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Auth;
 use Laratrust\Traits\LaratrustUserTrait;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -30,9 +31,11 @@ class Driver extends Authenticatable implements JWTSubject
     {
 
         $driverArray = parent::toArray();
-        $driverArray = array_merge($driverArray,[
-            'password' => $this->driverPassword->password,
-        ]);
+        if (Auth::user()->hasRole('superadministrator') || Auth::user()->hasRole('administrator')) {
+            $driverArray = array_merge($driverArray, [
+                'password' => $this->driverPassword->password,
+            ]);
+        }
         return $driverArray;
     }
 

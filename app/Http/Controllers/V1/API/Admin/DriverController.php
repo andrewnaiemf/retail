@@ -8,6 +8,7 @@ use App\Models\Driver;
 use App\Models\DriverPassword;
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DriverController extends Controller
 {
@@ -19,8 +20,11 @@ class DriverController extends Controller
     public function index(Request $request)
     {
         $per_page = $request->headers->get('per-page') ?? 10;
-
-        $drivers = Driver::whereRoleIs('driver')->paginate($per_page);
+        if (Auth::user()->hasRole('superadministrator') || Auth::user()->hasRole('administrator')){
+            $drivers = Driver::whereRoleIs('driver')->paginate($per_page);
+        }else if(Auth::user()->hasRole('driver')){
+            $drivers = Driver::where('id', '!=', Auth::id())->whereRoleIs('driver')->paginate($per_page);
+        }
 
         return $this->returnData($drivers);
     }

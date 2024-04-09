@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateOrderStatusRequest;
 use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Customer;
+use App\Models\Driver;
 use App\Models\Order;
 use App\Notifications\PushNotification;
 use App\Notifications\WhatsappNotification;
@@ -120,7 +121,28 @@ class OrderController extends Controller
             PushNotification::send($sender_id, $order->customer_id, $order, $request->status);
         }
 
+        if ($request->driver){
+            $this->reassignDriver($request->driver, $order->id);
+        }
+
         return $this->returnSuccessMessage('Order updated successfully');
+    }
+
+    protected function reassignDriver($driver_id, $order_id)
+    {
+        $driver = Driver::findOrFail($driver_id);
+
+        $order = Order::where(['status' => 'Approved', 'id' => $order_id])->first();
+
+        if (!isset($order)) {
+            return $this->returnError(422, 'Invalid data');
+        }
+
+        $order->driver()->associate($driver);
+
+        $order->save();
+        $sender_id = auth()->user()->id;
+        PushNotification::send($sender_id, $driver->id, $order, 'reassignToDriver');
     }
 
     /**
