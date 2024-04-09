@@ -14,6 +14,25 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+
+    public function checkPhone(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phone_number' => 'required|exists:users,phone_number',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->returnValidationError(401, $validator->errors()->all());
+        }
+
+        $customer = Customer::where('phone_number', $request->phone_number)->first();
+        if ($customer->password) {
+            return $this->returnData(['is_verified' => true]);
+        }else{
+            return $this->returnData(['is_verified' => false]);
+        }
+
+    }
     /**
      * Admin login.
      *

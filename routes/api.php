@@ -68,6 +68,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::post('login', [CustomerAuthController::class, 'login'])->name('customer.login');
     Route::post('forget-password', [CustomerAuthController::class, 'forgetPassword'])->name('customer.forgetPassword');
     Route::get('statistic', [StatisticController::class, 'index'])->name('customer.statistic');
+    Route::post('check-phone', [CustomerAuthController::class, 'checkPhone'])->name('customer.checkPhone');
 
     Route::group(['middleware' => ['role:user', 'auth:customer']], function () {
 
