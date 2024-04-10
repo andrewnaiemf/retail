@@ -98,7 +98,9 @@ class OrderController extends Controller
                         'quantity' => $lineItem['quantity'],
                     ]);
                 }else{
-                    $errors[$index] = sprintf("The selected line_items %d product_id is invalid", $index);
+                    $lineItem ['tax_percent'] = 15;
+                    $order->orderItems()->create($lineItem);
+//                    $errors[$index] = sprintf("The selected line_items %d product_id is invalid", $index);
                 }
             }else{
                 $existingOrderItem->delete();
