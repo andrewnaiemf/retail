@@ -31,11 +31,14 @@ class Driver extends Authenticatable implements JWTSubject
     {
 
         $driverArray = parent::toArray();
-        if (Auth::user()->hasRole('superadministrator') || Auth::user()->hasRole('administrator')) {
-            $driverArray = array_merge($driverArray, [
-                'password' => $this->driverPassword->password,
-            ]);
+        if (Auth::user()){
+            if (Auth::user()->hasRole('superadministrator') || Auth::user()->hasRole('administrator')) {
+                $driverArray = array_merge($driverArray, [
+                    'password' => $this->driverPassword->password,
+                ]);
+            }
         }
+
         return $driverArray;
     }
 
