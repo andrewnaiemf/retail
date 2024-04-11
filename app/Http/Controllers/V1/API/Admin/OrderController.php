@@ -116,14 +116,15 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, $order_id, $status){
 
-        $order = Order::findOrFail($order_id)->where('status','Draft')->first();
-
-        $order->update([
-            'status' => $status
-        ]);
-
-        $sender_id = auth()->user()->id;
-        PushNotification::send($sender_id, $order->customer_id, $order, $status);
+        $order = Order::findOrFail($order_id);
+        if ($order->status == 'Draft'){
+            $order->update([
+                'status' => $status
+            ]);
+            $order->save();
+            $sender_id = auth()->user()->id;
+            PushNotification::send($sender_id, $order->customer_id, $order, $status);
+        }
 
         return $this->returnSuccessMessage('order ' . $status . ' Successfully');
     }
