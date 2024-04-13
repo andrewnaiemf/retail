@@ -392,7 +392,7 @@ class FetchingController extends Controller
                     $customer = Customer::find($receipt->contact_id);
                     if ($receipt->wasRecentlyCreated) {
                         $this->addCustomerLoyalty($receipt->amount, $customer);
-                        $this->sendWhatsappNotificationMessage($receipt, $customer);
+//                        $this->sendWhatsappNotificationMessage($receipt, $customer);
                     }
                     $this->attachAllocates($receipt, $receiptse_data['allocations']);
                 }else{
