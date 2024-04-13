@@ -11,7 +11,7 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'customer_id', 'driver_id', 'shipping_status', 'reference', 'status', 'inventory_id', 'notes', 'terms_conditions', 'confirmation_image', 'location'
+        'customer_id', 'driver_id', 'shipping_status', 'reference', 'status', 'inventory_id', 'notes', 'terms_conditions', 'confirmation_image', 'location', 'loyalty_discount', 'loyalty_points'
     ];
 
     public function toArray()

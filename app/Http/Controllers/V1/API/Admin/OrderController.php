@@ -121,7 +121,10 @@ class OrderController extends Controller
             $order->update([
                 'status' => $status
             ]);
-            $order->save();
+            if ($request->status == 'Approved' && $order->loyalty_points > 0){
+                $customer = $order->customer;
+                $customer->update(['points' => $customer->points - $order->loyalty_points]);
+            }
             $sender_id = auth()->user()->id;
             PushNotification::send($sender_id, $order->customer_id, $order, $status);
         }

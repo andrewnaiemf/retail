@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ValidateOrderRequest;
 use App\Models\Customer;
 use App\Models\Inventory;
+use App\Models\LoyaltyPoint;
 use App\Models\Order;
 use App\Models\User;
 use App\Notifications\WhatsappNotification;
@@ -42,6 +43,17 @@ class OrderController extends Controller
         return $this->returnData($orders);
     }
 
+    public function checkLoyaltyDiscount()
+    {
+        $total_discount = 0;
+        $customer = Customer::find(auth('customer')->user()->id);
+        if ($customer->points > 0){
+            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
+            $total_discount = ($customer->points / $loyalty->points) * $loyalty->discount_amount;
+        }
+        return $this->returnData(['total_discount'=> ceil($total_discount)]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -67,7 +79,17 @@ class OrderController extends Controller
 
         $reference = $this->generateOrderReference();
         $order = $this->createOrder($customer, $reference, $orderData);
-
+        if ($request->use_loyalty == 1){
+            $loyalty_discount = 0;
+            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'status'=> 'active'])->first();
+            if ($customer->points > 0 && $customer->points > $loyalty->points){
+                if ($loyalty){
+                    $loyalty_discount = intdiv($customer->points , $loyalty->points) * $loyalty->discount_amount;
+                    $used_points = $customer->points - ($customer->points % $loyalty->points);
+                }
+            }
+            $order->update(['loyalty_discount' => $loyalty_discount, 'loyalty_points' => $used_points]);
+        }
         $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
         $message = "You have a new order from $customer->name";

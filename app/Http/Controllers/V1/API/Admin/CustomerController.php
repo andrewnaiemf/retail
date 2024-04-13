@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Customer;
+use App\Models\CustomerCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class CustomerController extends Controller
@@ -23,6 +26,13 @@ class CustomerController extends Controller
             ->paginate($per_page);
 
         return $this->returnData($customers);
+    }
+
+    public  function categories()
+    {
+        $categories = CustomerCategory::all();
+        return $this->returnData($categories);
+
     }
 
     /**
@@ -89,7 +99,17 @@ class CustomerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        $validator = Validator::make($request->all(), [
+            'category_id' => 'required|exists:customer_categories,id',
+        ]);
+        if ($validator->fails()) {
+            return $this->returnValidationError(401, $validator->errors()->all());
+        }
+        $customer = Customer::find($id);
+        $customer->update($request->all());
+
+        return $this->returnSuccessMessage("customer updated successfully");
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\Invoice;
 use App\Models\LineItem;
+use App\Models\LoyaltyPoint;
 use App\Models\Product;
 use App\Models\Receipt;
 use App\Models\Role;
@@ -358,17 +359,10 @@ class FetchingController extends Controller
                 if ( $account)
                 {
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
+                    $customer = Customer::find($receipt->contact_id);
                     if ($receipt->wasRecentlyCreated) {
-                        $message =  'تم اصدار سند جديد رقمه المرجعي {{1}} بقيمة {{2}}.';
-
-                        $message = str_replace('{{1}}', $receipt->reference, $message);
-                        $message = str_replace('{{2}}', $receipt->total, $message);
-
-                        $customer_number = $customer->phone_number;
-//                        if (!$customer_number){
-                            WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-//                        }
-//                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+                        $this->addCustomerLoyalty($receipt->amount, $customer);
+                        $this->sendWhatsappNotificationMessage($receipt, $customer);
                     }
                     $this->attachAllocates($receipt, $receiptse_data['allocations']);
                 }else{
@@ -376,6 +370,27 @@ class FetchingController extends Controller
                 }
             }
         }
+    }
+
+    protected function addCustomerLoyalty($amount, $customer)
+    {
+        $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
+        $new_points = intval(($amount * $loyalty->points) / $loyalty->discount_amount);
+        $customer->update(['points' => $new_points + $customer->points]);
+    }
+
+    protected function sendWhatsappNotificationMessage($receipt, $customer)
+    {
+        $message =  'تم اصدار سند جديد رقمه المرجعي {{1}} بقيمة {{2}}.';
+
+        $message = str_replace('{{1}}', $receipt->reference, $message);
+        $message = str_replace('{{2}}', $receipt->total, $message);
+
+//        $customer_number = $customer->phone_number;
+//                        if (!$customer_number){
+        WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
+//                        }
+//                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
     }
 
     protected function attachAllocates($receipt, $allocations_data)

@@ -20,7 +20,7 @@ use App\Http\Controllers\V1\API\Driver\AuthController as DriverAuthController;
 use App\Http\Controllers\V1\API\Driver\OrderController as DriverOrderController;
 use App\Http\Controllers\V1\API\NotificationController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\V1\API\Admin\LoyaltyPointController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -44,6 +44,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::get('fetch', [FetchingController::class, 'fetchData'])->name('fetch');
 
         Route::resource('customers', CustomerController::class);
+        Route::get('customer/categories', [CustomerController::class, 'categories']);
         Route::resource('invoices', InvoiceController::class);
         Route::resource('receipts', ReceiptController::class);
 
@@ -59,6 +60,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::get('orders/{order_id}/{status}', [AdminOrderController::class, 'updateStatus']);
         Route::post('orders/{order_id}/assign-driver', [AdminOrderController::class ,'assignDriver']);
 
+        Route::resource('loyalty', LoyaltyPointController::class);
 
     });
 
@@ -95,6 +97,7 @@ Route::group(['prefix' => 'user'], function () {
             'update' => 'customer.orders.update',
             'destroy' => 'customer.orders.destroy',
         ]);
+        Route::get('loyalty-discount', [OrderController::class, 'checkLoyaltyDiscount']);
 
         Route::resource('products', CustomerProductController::class)->names([
             'index' => 'customer.products.index',

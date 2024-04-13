@@ -28,7 +28,10 @@ class Customer extends Authenticatable implements JWTSubject
         'phone_number',
         'tax_number',
         'status',
-        'locale'
+        'locale',
+        'type',
+        'points',
+        'category_id'
     ];
 
     protected $hidden = ['password'];
