@@ -43,15 +43,26 @@ class FetchingController extends Controller
         $data = $request->input('data');
 
         try {
+            if ($data == 'receipts'){
+                $responseData = $this->updateReceipts();
+            }else{
+                $response = Http::withHeaders([
+                    'API-KEY' => $this->apiKey,
+                ])->get($this->baseUrl . $data);
 
-            $response = Http::withHeaders([
-                'API-KEY' => $this->apiKey,
-            ])->get($this->baseUrl . $data);
+                $responseData = json_decode($response->body());
 
-            $responseData = json_decode($response->body());
-
-            $this->storeData($data, $responseData->$data);
-            Log::info('Successfully fetched data from Qoyod API: ' . $data);
+                $this->storeData($data, $responseData->$data);
+                Log::info('Successfully fetched data from Qoyod API: ' . $data);
+            }
+//            $response = Http::withHeaders([
+//                'API-KEY' => $this->apiKey,
+//            ])->get($this->baseUrl . $data);
+//
+//            $responseData = json_decode($response->body());
+//
+//            $this->storeData($data, $responseData->$data);
+//            Log::info('Successfully fetched data from Qoyod API: ' . $data);
 
             return $this->returnData($responseData);
 
@@ -349,6 +360,25 @@ class FetchingController extends Controller
     ////////////////////////////// fetch receipts ///////////////////////////
 
 
+    protected function updateReceipts(){
+        $start = 1500;
+        $end = 3000;
+        $receipts = [];
+        for ($i = $start; $i <= $end; $i++) {
+            $response = Http::withHeaders([
+                'API-KEY' => $this->apiKey,
+            ])->get($this->baseUrl . 'receipts/'.$i);
+
+            $responseData = json_decode($response->body());
+            if ($response->getStatusCode() == 200){
+                array_push($receipts, $responseData);
+            }
+        }
+
+        $this->updateOrCreateReceipts($receipts);
+        return $receipts;
+    }
+
     public function updateOrCreateReceipts($qoyoud_data)
     {
         foreach ($qoyoud_data as $receiptse_data) {
@@ -374,9 +404,11 @@ class FetchingController extends Controller
 
     protected function addCustomerLoyalty($amount, $customer)
     {
-        $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
-        $new_points = intval(($amount * $loyalty->points) / $loyalty->discount_amount);
-        $customer->update(['points' => $new_points + $customer->points]);
+        if ($customer->category_id){
+            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
+            $new_points = intval(($amount * $loyalty->points) / $loyalty->discount_amount);
+            $customer->update(['points' => $new_points + $customer->points]);
+        }
     }
 
     protected function sendWhatsappNotificationMessage($receipt, $customer)
@@ -401,7 +433,9 @@ class FetchingController extends Controller
                 if ($receipt->allocates->isEmpty()) {
 
                     foreach ($allocations_data as $allocation_data) {
-
+                        if (!isset($allocation_data->source_id)){
+                            $allocation_data->source_id = $receipt->id;
+                        }
                         $existReceipt = Receipt::findOrFail($allocation_data->source_id);
                         $existInvoice = Invoice::findOrFail($allocation_data->allocatee_id);
 
