@@ -39,8 +39,8 @@ class FetchDataAsAdmin extends Command
     public function handle()
     {
         $client = new Client();
-//        $url = "https://driveshield.net/api/admin/";
-        $url = "127.0.0.1:8000/api/admin/";
+        $url = "https://driveshield.net/api/admin/";
+//        $url = "127.0.0.1:8000/api/admin/";
 
         $admin_phone = config('app.ADMIN_PHONE');
         $admin_pass = config('app.ADMIN_PASSWORD');
@@ -70,7 +70,7 @@ class FetchDataAsAdmin extends Command
         $total_time = $end_time - $start_time;
 
         $total_time_ms = round($total_time * 1000);
-        dd($total_time_ms );
+//        dd($total_time_ms );
         $this->info("Total time taken to fetch data: {$total_time_ms} milliseconds");
 
     }
