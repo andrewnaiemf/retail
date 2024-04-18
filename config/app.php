@@ -65,6 +65,8 @@ return [
     'API_KEY' => env('API_KEY', null),
 
     'FCM_KEY' => env('FCM_KEY', null),
+    'ADMIN_PHONE' => env('ADMIN_PHONE', null),
+    'ADMIN_PASSWORD' => env('ADMIN_PASSWORD', null),
 
     /*
     |--------------------------------------------------------------------------
