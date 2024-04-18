@@ -362,7 +362,7 @@ class FetchingController extends Controller
 
     protected function updateReceipts(){
         $start = 1500;
-        $end = 3000;
+        $end = 2000;
         $receipts = [];
         for ($i = $start; $i <= $end; $i++) {
             $response = Http::withHeaders([
@@ -416,7 +416,7 @@ class FetchingController extends Controller
         $message =  'تم اصدار سند جديد رقمه المرجعي {{1}} بقيمة {{2}}.';
 
         $message = str_replace('{{1}}', $receipt->reference, $message);
-        $message = str_replace('{{2}}', $receipt->total, $message);
+        $message = str_replace('{{2}}', $receipt->amount, $message);
 
 //        $customer_number = $customer->phone_number;
 //                        if (!$customer_number){
