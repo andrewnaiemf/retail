@@ -361,9 +361,12 @@ class FetchingController extends Controller
 
 
     protected function updateReceipts(){
-        $start = 1500;
-        $end = 2000;
+        $last_receipt_id = Receipt::orderBy('id', 'desc')->first()->id;
+
+        $start = $last_receipt_id + 1;
+        $end = $start + 10;
         $receipts = [];
+        dd( $start , $end);
         for ($i = $start; $i <= $end; $i++) {
             $response = Http::withHeaders([
                 'API-KEY' => $this->apiKey,
