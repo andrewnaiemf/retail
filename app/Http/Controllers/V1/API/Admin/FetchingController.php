@@ -312,9 +312,17 @@ class FetchingController extends Controller
             if ($invoice->wasRecentlyCreated)
             {
                 $customer  = Customer::findOrFail($invoice->contact_id);
-                $message = 'تم اصدار فاتورة جديدة رقمها المرجعي {{1}} بقيمة {{2}}.';
-                $message = str_replace('{{1}}', $invoice->reference, $message);
-                $message = str_replace('{{2}}', $invoice->total, $message);
+                $message = $message = 'عزيزي {{1}}
+
+تم إصدار فاتورة جديدة رقم {{2}} بقيمة {{3}} ر.س
+
+كما يمكنك الاطلاع على جميع فواتيرك وخدمات أخرى من خلال تطبيق DES.
+رابط التطبيق: {{4}}';
+
+                $message = str_replace('{{1}}', $customer->name, $message);
+                $message = str_replace('{{2}}', $invoice->reference, $message);
+                $message = str_replace('{{3}}', $invoice->total, $message);
+                $message = str_replace('{{4}}', 'https://driveshield-d5a37.web.app/', $message);
 
                 $customer_number = $customer->phone_number;
 //                if (!$customer_number){
@@ -416,11 +424,15 @@ class FetchingController extends Controller
 
     protected function sendWhatsappNotificationMessage($receipt, $customer)
     {
-        $message =  'تم اصدار سند جديد رقمه المرجعي {{1}} بقيمة {{2}}.';
+        $message = 'عزيزي {{1}}
 
-        $message = str_replace('{{1}}', $receipt->reference, $message);
+نشكرك على سداد مبلغ {{2}} ر.س في السند رقم {{3}} بتاريخ {{4}}';
+
+        $message = str_replace('{{1}}', $customer->name, $message);
         $message = str_replace('{{2}}', $receipt->amount, $message);
-
+        $message = str_replace('{{3}}', $receipt->reference, $message);
+        $message = str_replace('{{4}}', $receipt->date, $message);
+//dd($message);
 //        $customer_number = $customer->phone_number;
 //                        if (!$customer_number){
         WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
