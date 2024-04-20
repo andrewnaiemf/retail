@@ -328,7 +328,7 @@ class FetchingController extends Controller
 //                if (!$customer_number){
                     WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
 //                }
-//                WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+//                WhatsappNotification::sendWhatsAppMessage($message, '+966'.$customer_number);
             }
 
             $this->attachLineItems($invoice, (array)$invoice_data);
@@ -437,7 +437,7 @@ class FetchingController extends Controller
 //                        if (!$customer_number){
         WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
 //                        }
-//                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+//                        WhatsappNotification::sendWhatsAppMessage($message, '+966'.$customer_number);
     }
 
     protected function attachAllocates($receipt, $allocations_data)

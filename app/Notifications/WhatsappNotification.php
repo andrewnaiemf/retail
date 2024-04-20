@@ -13,7 +13,6 @@ class WhatsappNotification
         $twilioToken = config('app.twilio_auth_token');
         $twilioWhatsAppNumber = 'whatsapp:+966541138239';
         $recipientNumber = 'whatsapp:'. $recipientNumber;
-        $recipientNumber = 'whatsapp:+966'.$recipientNumber;
         $messageBody = $message;
 
         $twilio = new Client($twilioSid, $twilioToken);
