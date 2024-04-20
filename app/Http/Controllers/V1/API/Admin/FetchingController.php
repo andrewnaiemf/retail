@@ -253,7 +253,7 @@ class FetchingController extends Controller
 
         foreach ($qoyoud_data as $invoice_data) {
 
-            if ($invoice_data->contact_id) {
+            if ($invoice_data->contact_id && $invoice_data->status != 'Draft') {
                 if (!in_array($invoice_data->contact_id, $customers_id)) {
                     try {
 
