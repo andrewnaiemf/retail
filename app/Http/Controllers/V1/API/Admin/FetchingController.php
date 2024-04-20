@@ -366,7 +366,7 @@ class FetchingController extends Controller
         $start = $last_receipt_id + 1;
         $end = $start + 10;
         $receipts = [];
-        dd( $start , $end);
+
         for ($i = $start; $i <= $end; $i++) {
             $response = Http::withHeaders([
                 'API-KEY' => $this->apiKey,
