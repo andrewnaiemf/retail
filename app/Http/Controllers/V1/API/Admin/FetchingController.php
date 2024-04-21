@@ -312,12 +312,13 @@ class FetchingController extends Controller
             if ($invoice->wasRecentlyCreated)
             {
                 $customer  = Customer::findOrFail($invoice->contact_id);
-                $message = $message = 'عزيزي {{1}}
+                $message = 'عزيزي {{1}}
 
 تم إصدار فاتورة جديدة رقم {{2}} بقيمة {{3}} ر.س
 
-كما يمكنك الاطلاع على جميع فواتيرك وخدمات أخرى من خلال تطبيق DES.
-رابط التطبيق: {{4}}';
+كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
+
+ {{4}}';
 
                 $message = str_replace('{{1}}', $customer->name, $message);
                 $message = str_replace('{{2}}', $invoice->reference, $message);
