@@ -125,6 +125,13 @@ class FetchingController extends Controller
 
         foreach ($qoyoud_data as $customer_data) {
             $customer_data = (array)$customer_data;
+            $mobile_phone = $customer_data['phone_number'];
+
+            if (substr($mobile_phone, 0, 1) === '0') {
+                // Remove the first character (which is '0') and prepend '+966'
+                $mobile_phone = '+966' . substr($mobile_phone, 1);
+                $customer_data['phone_number'] = $mobile_phone;
+            }
 
             $customer_id = $customer_data['id'];
             $customer_data['password'] = bcrypt($customer_data['phone_number']);

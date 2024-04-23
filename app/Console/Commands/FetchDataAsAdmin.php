@@ -45,7 +45,7 @@ class FetchDataAsAdmin extends Command
         $admin_phone = config('app.ADMIN_PHONE');
         $admin_pass = config('app.ADMIN_PASSWORD');
         $token = $this->getToken($url, $admin_phone, $admin_pass);
-        $datasets = [ 'invoices', 'receipts'];
+        $datasets = [ 'customers', 'invoices', 'receipts'];
         $url .= 'fetch';
         $start_time = microtime(true);
 
