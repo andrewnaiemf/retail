@@ -55,7 +55,7 @@ class AuthController extends Controller
         }
 
         $token = JWTAuth::fromUser($user);
-        $user->update(['locale' => $request->locale, 'is_android' => $request->is_android]);
+        $user->update(['locale' => $request->locale, 'is_android' => $request->is_android ?? '0']);
 
         $this->device_token($request->device_token, $user);
 
