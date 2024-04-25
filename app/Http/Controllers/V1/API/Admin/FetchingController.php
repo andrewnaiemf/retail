@@ -326,11 +326,11 @@ class FetchingController extends Controller
 كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
 
  {{4}}';
-
+                $app_link = $customer->is_android == 1 ? 'android.com' : 'ios.com';
                 $message = str_replace('{{1}}', $customer->name, $message);
                 $message = str_replace('{{2}}', $invoice->reference, $message);
                 $message = str_replace('{{3}}', $invoice->total, $message);
-                $message = str_replace('{{4}}', 'https://driveshield-d5a37.web.app/', $message);
+                $message = str_replace('{{4}}', $app_link, $message);
 
                 $customer_number = $customer->phone_number;
 //                if (!$customer_number){
