@@ -61,6 +61,7 @@ Route::group(['prefix' => 'admin'], function ($router) {
         Route::post('orders/{order_id}/assign-driver', [AdminOrderController::class ,'assignDriver']);
 
         Route::resource('loyalty', LoyaltyPointController::class);
+        Route::get('customer-category', [LoyaltyPointController::class, 'customerCategory']);
 
     });
 

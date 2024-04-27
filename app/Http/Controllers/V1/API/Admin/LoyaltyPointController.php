@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1\API\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomerCategory;
 use App\Models\LoyaltyPoint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -20,6 +21,13 @@ class LoyaltyPointController extends Controller
 
         return  $this->returnData($loyalties);
 
+    }
+
+    public function customerCategory()
+    {
+        $categories = CustomerCategory::all();
+
+        return  $this->returnData($categories);
     }
 
     /**
