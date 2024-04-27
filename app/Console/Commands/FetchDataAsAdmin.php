@@ -59,7 +59,7 @@ class FetchDataAsAdmin extends Command
                     'query' => ['data' => $dataset]
                 ]);
 
-                $this->info("Fetched data for {$dataset}: " . $response->getBody());
+//                $this->info("Fetched data for {$dataset}: " . $response->getBody());
             } catch (\Exception $e) {
                 $this->error("Failed to fetch data for {$dataset}: " . $e->getMessage());
             }
