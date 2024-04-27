@@ -47,7 +47,7 @@ class ReceiptController extends Controller
      */
     public function show($id)
     {
-        $receipt = Receipt::with(['contact', 'account', 'allocates'])->findOrFail($id);
+        $receipt = Receipt::with(['contact', 'account', 'allocates.allocatee'])->findOrFail($id);
 
         return $this->returnData($receipt);
     }
