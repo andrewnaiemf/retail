@@ -23,12 +23,6 @@ class LoyaltyPointController extends Controller
 
     }
 
-    public function customerCategory()
-    {
-        $categories = CustomerCategory::all();
-
-        return  $this->returnData($categories);
-    }
 
     /**
      * Show the form for creating a new resource.
