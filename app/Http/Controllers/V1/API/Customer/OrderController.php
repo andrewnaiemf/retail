@@ -88,7 +88,7 @@ class OrderController extends Controller
                     $used_points = $customer->points - ($customer->points % $loyalty->points);
                 }
             }
-            $order->update(['loyalty_discount' => $loyalty_discount, 'loyalty_points' => $used_points]);
+            $order->update(['loyalty_discount' => $loyalty_discount, 'loyalty_points' => $used_points ?? $customer->points]);
         }
         $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
