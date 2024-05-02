@@ -425,8 +425,10 @@ class FetchingController extends Controller
     {
         if ($customer->category_id){
             $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
-            $new_points = intval(($amount * $loyalty->points) / $loyalty->discount_amount);
-            $customer->update(['points' => $new_points + $customer->points]);
+            if(isset($loyalty) && isset($loyalty->points) && isset($loyalty->discount_amount)){
+                $new_points = intval(($amount * $loyalty->points) / $loyalty->discount_amount);
+                $customer->update(['points' => $new_points + $customer->points]);
+            }
         }
     }
 
