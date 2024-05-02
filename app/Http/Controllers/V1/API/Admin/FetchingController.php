@@ -436,7 +436,7 @@ class FetchingController extends Controller
     {
         $message = 'عزيزي {{1}}
 
-نشكرك على سداد مبلغ {{2}} ر.س في السند رقم {{3}} بتاريخ {{4}}';
+نشكرك على سداد مبلغ {{2}} ر.س بسند رقم {{3}} بتاريخ {{4}}';
 
         $message = str_replace('{{1}}', $customer->name, $message);
         $message = str_replace('{{2}}', $receipt->amount, $message);
