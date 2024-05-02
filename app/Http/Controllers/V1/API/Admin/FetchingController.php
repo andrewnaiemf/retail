@@ -321,7 +321,7 @@ class FetchingController extends Controller
                 $customer  = Customer::findOrFail($invoice->contact_id);
                 $message = 'عزيزي {{1}}
 
-تم إصدار فاتورة جديدة رقم {{2}} بقيمة {{3}} ر.س
+تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
 
 كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
 
