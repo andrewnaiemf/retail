@@ -28,7 +28,7 @@ class WhatsappNotification
             );
 
             return response()->json(['message' => 'WhatsApp message sent successfully']);
-        } catch (\Exception $e) {dd($e);
+        } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }

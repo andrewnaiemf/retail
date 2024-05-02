@@ -43,9 +43,9 @@ class FetchingController extends Controller
         $data = $request->input('data');
 
         try {
-            if ($data == 'receipts'){
-                $responseData = $this->updateReceipts();
-            }else{
+//            if ($data == 'receipts'){
+//                $responseData = $this->updateReceipts();
+//            }else{
                 $response = Http::withHeaders([
                     'API-KEY' => $this->apiKey,
                 ])->get($this->baseUrl . $data);
@@ -54,7 +54,7 @@ class FetchingController extends Controller
 
                 $this->storeData($data, $responseData->$data);
                 Log::info('Successfully fetched data from Qoyod API: ' . $data);
-            }
+//            }
 //            $response = Http::withHeaders([
 //                'API-KEY' => $this->apiKey,
 //            ])->get($this->baseUrl . $data);
