@@ -325,7 +325,7 @@ class FetchingController extends Controller
 كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
 
 {{4}}';
-                    $app_link = $customer->is_android == 1 ? 'android.com' : 'ios.com';
+                    $app_link = $customer->is_android == 1 ? 'https://play.google.com/store/apps/details?id=com.DES.DESUserApp&hl=en&gl=US' : 'https://testflight.apple.com/join/S1akAZsV';
                     $message = str_replace('{{1}}', $customer->name, $message);
                     $message = str_replace('{{2}}', $invoice->reference, $message);
                     $message = str_replace('{{3}}', $invoice->total, $message);
