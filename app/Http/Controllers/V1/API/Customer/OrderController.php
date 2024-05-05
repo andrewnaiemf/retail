@@ -92,7 +92,7 @@ class OrderController extends Controller
         }
         $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
-        $message = "You have a new order from $customer->name";
+        $message = "You have a new order from ".$customer->name;
         $admin_phone = User::first()->phone_number;
         WhatsappNotification::sendWhatsAppMessage($message, $admin_phone);
 
