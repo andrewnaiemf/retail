@@ -332,10 +332,10 @@ class FetchingController extends Controller
                     $message = str_replace('{{4}}', $app_link, $message);
 
                     $customer_number = $customer->phone_number;
-    //                if (!$customer_number){
+                    if (!$customer_number){
                         WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-    //                }
-    //                WhatsappNotification::sendWhatsAppMessage($message, '+966'.$customer_number);
+                    }
+                    WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
                 }
                 $this->attachLineItems($invoice, (array)$invoice_data);
             }
@@ -442,11 +442,11 @@ class FetchingController extends Controller
         $message = str_replace('{{3}}', $receipt->reference, $message);
         $message = str_replace('{{4}}', $receipt->date, $message);
 //dd($message);
-//        $customer_number = $customer->phone_number;
-//                        if (!$customer_number){
+        $customer_number = $customer->phone_number;
+                        if (!$customer_number){
         WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-//                        }
-//                        WhatsappNotification::sendWhatsAppMessage($message, '+966'.$customer_number);
+                        }
+                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
     }
 
     protected function attachAllocates($receipt, $allocations_data)
