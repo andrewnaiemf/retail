@@ -314,17 +314,17 @@ class FetchingController extends Controller
     //                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
                 }
                 $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
-    
+
                 if ($invoice->wasRecentlyCreated)
                 {
                     $customer  = Customer::findOrFail($invoice->contact_id);
                     $message = 'عزيزي {{1}}
 
-    تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
+تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
 
-    كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
+كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
 
-     {{4}}';
+{{4}}';
                     $app_link = $customer->is_android == 1 ? 'android.com' : 'ios.com';
                     $message = str_replace('{{1}}', $customer->name, $message);
                     $message = str_replace('{{2}}', $invoice->reference, $message);
