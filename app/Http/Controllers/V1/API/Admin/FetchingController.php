@@ -231,7 +231,7 @@ class FetchingController extends Controller
     {
         foreach ($qoyoud_data as $product_data) {
             $product_data = (array)$product_data;
-            if ($product_data['type'] == 'Product') {
+            if ($product_data['type'] == 'Product' || $product_data['type'] == 'Service') {
                 $product = Product::updateOrCreate(['id' => $product_data['id']], $product_data);
                 $this->attachInventory($product, $product_data);
             }
@@ -261,82 +261,82 @@ class FetchingController extends Controller
         foreach ($qoyoud_data as $invoice_data) {
 
             if ($invoice_data->contact_id && $invoice_data->status != 'Draft') {
-                if (!in_array($invoice_data->contact_id, $customers_id)) {
-                    try {
-
-                        $response = Http::withHeaders([
-                            'API-KEY' => $this->apiKey,
-                        ])->get($this->baseUrl . 'customers');
-
-                        $responseData = json_decode($response->body());
-
-                        $this->storeData('customers', $responseData->customers);
-                        Log::info('Successfully fetched data from Qoyod API: customers');
-                    } catch (\Exception $e) {
-
-                        Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
-
-                        return $this->returnError(422, 'Failed to fetch data from Qoyod API ' . $e->getMessage());
-                    }
-                }
-
-                try {
-                    $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
-
-                    if (!Storage::disk('public')->exists($path)) {
-
-                        $response = Http::withHeaders([
-                            'API-KEY' => $this->apiKey,
-                        ])->get($this->baseUrl . '/invoices/' . $invoice_data->id . '/pdf');
-
-                        $responseData = json_decode($response->body());
-
-                        $response = Http::get($responseData->pdf_file);
-                        $path = 'invoices/pdf/' . $invoice_data->id . '/';
-
-                        if ($response->ok()) {
-                            Storage::disk('public')->put($path . 'invoice.pdf', $response->body());
-                            Log::info('PDF downloaded and stored successfully.');
-                        } else {
-                            Log::info('Failed to download PDF.');
-                        }
-
-                        $invoice_data->pdf = $path . 'invoice.pdf';
-
-                        Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
-                    } else {
-                        Log::info('PDF already exists in storage. Skipping download.');
-                    }
-
-                }
-                catch (\Exception $e) {
-                    Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
-    //                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
-                }
+//                if (!in_array($invoice_data->contact_id, $customers_id)) {
+//                    try {
+//
+//                        $response = Http::withHeaders([
+//                            'API-KEY' => $this->apiKey,
+//                        ])->get($this->baseUrl . 'customers');
+//
+//                        $responseData = json_decode($response->body());
+//
+//                        $this->storeData('customers', $responseData->customers);
+//                        Log::info('Successfully fetched data from Qoyod API: customers');
+//                    } catch (\Exception $e) {
+//
+//                        Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
+//
+//                        return $this->returnError(422, 'Failed to fetch data from Qoyod API ' . $e->getMessage());
+//                    }
+//                }
+//
+//                try {
+//                    $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
+//
+//                    if (!Storage::disk('public')->exists($path)) {
+//
+//                        $response = Http::withHeaders([
+//                            'API-KEY' => $this->apiKey,
+//                        ])->get($this->baseUrl . '/invoices/' . $invoice_data->id . '/pdf');
+//
+//                        $responseData = json_decode($response->body());
+//
+//                        $response = Http::get($responseData->pdf_file);
+//                        $path = 'invoices/pdf/' . $invoice_data->id . '/';
+//
+//                        if ($response->ok()) {
+//                            Storage::disk('public')->put($path . 'invoice.pdf', $response->body());
+//                            Log::info('PDF downloaded and stored successfully.');
+//                        } else {
+//                            Log::info('Failed to download PDF.');
+//                        }
+//
+//                        $invoice_data->pdf = $path . 'invoice.pdf';
+//
+//                        Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
+//                    } else {
+//                        Log::info('PDF already exists in storage. Skipping download.');
+//                    }
+//
+//                }
+//                catch (\Exception $e) {
+//                    Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
+//    //                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
+//                }
                 $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
 
-                if ($invoice->wasRecentlyCreated)
-                {
-                    $customer  = Customer::findOrFail($invoice->contact_id);
-                    $message = 'عزيزي {{1}}
-
-تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
-
-كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
-
-{{4}}';
-                    $app_link = $customer->is_android == 1 ? 'https://play.google.com/store/apps/details?id=com.DES.DESUserApp&hl=en&gl=US' : 'https://testflight.apple.com/join/S1akAZsV';
-                    $message = str_replace('{{1}}', $customer->name, $message);
-                    $message = str_replace('{{2}}', $invoice->reference, $message);
-                    $message = str_replace('{{3}}', $invoice->total, $message);
-                    $message = str_replace('{{4}}', $app_link, $message);
-
-                    $customer_number = $customer->phone_number;
-                    if (!$customer_number){
-                        WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-                    }
-                    WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
-                }
+//                if ($invoice->wasRecentlyCreated)
+//                {
+//                    $customer  = Customer::findOrFail($invoice->contact_id);
+//                    $message = 'عزيزي {{1}}
+//
+//تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
+//
+//كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
+//
+//{{4}}';
+//                    $app_link = $customer->is_android == 1 ? 'https://play.google.com/store/apps/details?id=com.DES.DESUserApp&hl=en&gl=US' : 'https://testflight.apple.com/join/S1akAZsV';
+//                    $message = str_replace('{{1}}', $customer->name, $message);
+//                    $message = str_replace('{{2}}', $invoice->reference, $message);
+//                    $message = str_replace('{{3}}', $invoice->total, $message);
+//                    $message = str_replace('{{4}}', $app_link, $message);
+//
+//                    $customer_number = $customer->phone_number;
+//                    if (!$customer_number){
+//                        WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
+//                    }
+//                    WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+//                }
                 $this->attachLineItems($invoice, (array)$invoice_data);
             }
         }
@@ -358,7 +358,21 @@ class FetchingController extends Controller
                         $item['invoice_id'] = $invoice->id;
                         $lineItems[] = new LineItem($item);
                     }else{
-                        /////// return error message you should fetch products recently added.
+                        try {
+                            $response = Http::withHeaders([
+                                'API-KEY' => $this->apiKey,
+                            ])->get($this->baseUrl . 'products');
+
+                            $responseData = json_decode($response->body());
+
+                            $this->storeData('products', $responseData->products);
+                            Log::info('Successfully fetched data from Qoyod API: products');
+                        } catch (\Exception $e) {
+
+                            Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
+
+                            return $this->returnError(422, 'Failed to fetch data from Qoyod API ' . $e->getMessage());
+                        }
                     }
 
                 }
@@ -399,8 +413,10 @@ class FetchingController extends Controller
 
     public function updateOrCreateReceipts($qoyoud_data)
     {
+//        $qoyoud_receipts_id = [];
         foreach ($qoyoud_data as $receiptse_data) {
             $receiptse_data = (array)$receiptse_data;
+//            array_push($receipts_id, $receiptse_data['id']);
             if ($receiptse_data['kind'] === 'received') {
 
                 $account = Account::find($receiptse_data['account_id']);
@@ -418,6 +434,14 @@ class FetchingController extends Controller
                 }
             }
         }
+//        $deleted_receipts = Receipt::whereNotIn('id', $receiptse_data)->get();
+//
+//        foreach ($deleted_receipts as $receipt) {
+//            // Delete allocations associated with the receipt
+//            $receipt->allocates()->delete();
+//            // Delete the receipt itself
+//            $receipt->delete();
+//        }
     }
 
     protected function addCustomerLoyalty($amount, $customer)

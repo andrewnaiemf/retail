@@ -27,7 +27,7 @@ class ProductController extends Controller
         $products = QueryBuilder::for(Product::class)
             ->allowedFilters(
                 AllowedFilter::custom('name', new FiltersProduct)
-            )->with(['category'])
+            )->where('type','Product')->with(['category'])
             ->paginate($per_page);
 
         return $this->returnData($products);
