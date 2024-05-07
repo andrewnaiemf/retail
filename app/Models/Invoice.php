@@ -30,7 +30,8 @@ class Invoice extends Model
     public function toArray()
     {
         $invoice = parent::toArray();
-        $invoice['status'] = $this->status == 'Paid' ? trans('locale.Paid') : $this->status ;
+        $invoice['status'] = trans("locale.{$this->status}", [], 'ar') ?: $this->status;
+
         $invoice['payment_method'] = $this->due_amount == 0 ? trans('locale.isPaid') : ($this->payment_method == -1 ? trans('locale.in_advance') : $this->status);
 
         $invoice['inventory'] = Inventory::find(1);
