@@ -413,10 +413,10 @@ class FetchingController extends Controller
 
     public function updateOrCreateReceipts($qoyoud_data)
     {
-//        $qoyoud_receipts_id = [];
+       $qoyoud_receipts_id = [];
         foreach ($qoyoud_data as $receiptse_data) {
             $receiptse_data = (array)$receiptse_data;
-//            array_push($receipts_id, $receiptse_data['id']);
+           array_push($qoyoud_receipts_id, $receiptse_data['id']);
             if ($receiptse_data['kind'] === 'received') {
 
                 $account = Account::find($receiptse_data['account_id']);
@@ -434,14 +434,14 @@ class FetchingController extends Controller
                 }
             }
         }
-//        $deleted_receipts = Receipt::whereNotIn('id', $receiptse_data)->get();
-//
-//        foreach ($deleted_receipts as $receipt) {
-//            // Delete allocations associated with the receipt
-//            $receipt->allocates()->delete();
-//            // Delete the receipt itself
-//            $receipt->delete();
-//        }
+       $deleted_receipts = Receipt::whereNotIn('id', $qoyoud_receipts_id)->get();
+
+       foreach ($deleted_receipts as $receipt) {
+           // Delete allocations associated with the receipt
+           $receipt->allocates()->delete();
+           // Delete the receipt itself
+           $receipt->delete();
+       }
     }
 
     protected function addCustomerLoyalty($amount, $customer)
