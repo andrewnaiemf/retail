@@ -93,10 +93,10 @@ class ProductController extends Controller
             return $this->returnError(422, 'invalid customer id');
         }
 
-//        foreach ($request->products as $productData) {
+        foreach ($request->products as $productData) {
 
-            $productId = $request['id'];
-            $price = $request['price'];
+            $productId = $productData['id'];
+            $price = $productData['price'];
 
             $product = Product::find($productId);
 
@@ -112,7 +112,7 @@ class ProductController extends Controller
                     $pivotData['deleted_at'] = null;
                      $customer->products()->sync([$productId => $pivotData], false);
                 }
-//            }
+            }
         }
 
         return $this->returnSuccessMessage('Products attached to customer successfully');
