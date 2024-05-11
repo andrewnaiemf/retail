@@ -494,6 +494,7 @@ class FetchingController extends Controller
                         if ($existReceipt && $existInvoice) {
                             $allocation_data = (array)$allocation_data;
                             Allocation::create($allocation_data);
+                            $this->reuploadInvoicePdf($existInvoice);
                         }else{
                             /////// return error message you should fetch products recently added.
                         }
@@ -504,6 +505,40 @@ class FetchingController extends Controller
                 }
             }
 
+        }
+    }
+
+    protected function reuploadInvoicePdf($invoice_data){
+        $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
+
+        if (Storage::disk('public')->exists($path)) {
+            $path = 'invoices/pdf/' . $invoice_data->id . '/';
+
+            $response = Http::withHeaders([
+                'API-KEY' => $this->apiKey,
+            ])->get($this->baseUrl . '/invoices/' . $invoice_data->id . '/pdf');
+
+            $responseData = json_decode($response->body());
+
+            $response = Http::get($responseData->pdf_file);
+            $path = 'invoices/pdf/' . $invoice_data->id . '/';
+
+            if ($response->ok()) {
+                $filename = 'invoice.pdf';
+                if (Storage::disk('public')->exists($path . $filename)) {
+                    Storage::disk('public')->delete($path . $filename);
+                }
+                Storage::disk('public')->put($path . 'invoice.pdf', $response->body());
+                Log::info('PDF downloaded and stored successfully.');
+            } else {
+                Log::info('Failed to download PDF.');
+            }
+
+            $invoice_data->pdf = $path . 'invoice.pdf';
+
+            Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
+        } else {
+            Log::info('PDF already exists in storage. Skipping download.');
         }
     }
 
