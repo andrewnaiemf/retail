@@ -283,7 +283,7 @@ class FetchingController extends Controller
                try {
                    $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
 
-                   if (!Storage::disk('public')->exists($path)) {
+                   if (!Storage::disk('public')->exists($path) || $invoice_data->status != 'Paid') {
 
                        $response = Http::withHeaders([
                            'API-KEY' => $this->apiKey,
@@ -295,6 +295,10 @@ class FetchingController extends Controller
                        $path = 'invoices/pdf/' . $invoice_data->id . '/';
 
                        if ($response->ok()) {
+                           $filename = 'invoice.pdf';
+                           if (Storage::disk('public')->exists($path . $filename)) {
+                               Storage::disk('public')->delete($path . $filename);
+                           }
                            Storage::disk('public')->put($path . 'invoice.pdf', $response->body());
                            Log::info('PDF downloaded and stored successfully.');
                        } else {
