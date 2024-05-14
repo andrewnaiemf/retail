@@ -149,7 +149,7 @@ class FetchingController extends Controller
     {
         $address_data = (array)$address_data;
         if (isset($address_data['id'])) {
-            $customer->$addressType()->updateOrCreate(['id' => $address_data['id']], $address_data);
+            $customer->$addressType()->updateOrCreate(['contact_id' => $customer['id']], $address_data);
         }
     }
 
