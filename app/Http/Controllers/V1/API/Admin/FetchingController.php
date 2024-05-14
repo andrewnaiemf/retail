@@ -134,9 +134,12 @@ class FetchingController extends Controller
             }
 
             $customer_id = $customer_data['id'];
-//            $customer_data['password'] = bcrypt($customer_data['phone_number']);
-            $customer = Customer::updateOrCreate(['id' => $customer_id], $customer_data);
 
+            $customer = Customer::updateOrCreate(['id' => $customer_id], $customer_data);
+//            if ($customer->wasRecentlyCreated){
+                $customer->password = bcrypt('NEIL!@#$123456%$');
+                $customer->save();
+//            }
 
             $this->updateOrCreateAddress($customer, 'shippingAddress', $customer_data['shipping_address']);
             $this->updateOrCreateAddress($customer, 'billingAddress', $customer_data['billing_address']);
