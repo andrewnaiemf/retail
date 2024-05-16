@@ -101,7 +101,7 @@ class CustomerController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'category_id' => 'required|exists:customer_categories,id',
+            'category_id' => 'exists:customer_categories,id',
         ]);
         if ($validator->fails()) {
             return $this->returnValidationError(401, $validator->errors()->all());
