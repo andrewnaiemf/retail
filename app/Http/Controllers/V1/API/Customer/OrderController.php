@@ -48,8 +48,9 @@ class OrderController extends Controller
         $total_discount = 0;
         $customer = Customer::find(auth('customer')->user()->id);
         if ($customer->points > 0){
-            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
-            $total_discount = ($customer->points / $loyalty->points) * $loyalty->discount_amount;
+//            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
+//            $total_discount = ($customer->points / $loyalty->points) * $loyalty->discount_amount;
+            $total_discount = $customer->points ;
         }
         return $this->returnData(['total_discount'=> ceil($total_discount)]);
     }
