@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\User;
 use App\Notifications\WhatsappNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -73,6 +74,13 @@ class OrderController extends Controller
      */
     public function store(ValidateOrderRequest $request)
     {
+        if (Auth::guard('customer')->check()) {
+            $userid = auth()->user()->id;
+            $user = Customer::find($userid);
+            if($user->device_token == NULL){
+                Auth::logout();
+            }
+        }
         $orderData = $request->input('order');
         $customer = Customer::findOrFail($orderData['branch_id']);
         $lineItems = $orderData['line_items'];
