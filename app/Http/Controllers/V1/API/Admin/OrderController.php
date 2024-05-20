@@ -22,7 +22,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $per_page = $request->headers->get('per-page') ?? 10;
+        $per_page = $request->headers->get('per-page') ?? 10000;
         $orders = QueryBuilder::for(Order::class)->with(['orderItems.product','driver','customer'])
             ->allowedFilters(
                 AllowedFilter::custom('status', new FiltersOrders)
