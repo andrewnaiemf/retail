@@ -435,9 +435,10 @@ class FetchingController extends Controller
                 $account = Account::find($receiptse_data['account_id']);
                 if ( $account)
                 {
+                    $exist_receipt = Receipt::where(['reference' => $receiptse_data['reference']])->first();
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
                     $customer = Customer::find($receipt->contact_id);
-                    if ($receipt->wasRecentlyCreated) {
+                    if (!$exist_receipt && $receipt) {
                         $this->addCustomerLoyalty($receipt->amount, $customer);
                         $this->sendWhatsappNotificationMessage($receipt, $customer);
                     }
