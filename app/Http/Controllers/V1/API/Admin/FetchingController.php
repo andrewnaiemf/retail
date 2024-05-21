@@ -317,9 +317,12 @@ class FetchingController extends Controller
    //                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
                }
                 $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
-                $path = 'invoices/pdf/' . $invoice->id . '/invoice.pdf';
+               
+               if (!$invoice->pdf){
+                   $path = 'invoices/pdf/' . $invoice->id . '/invoice.pdf';
+                   $invoice->update(['pdf' => $path]);
+               }
 
-                $invoice->update(['pdf' => $path]);
 
                if ($invoice->wasRecentlyCreated)
                {
