@@ -307,13 +307,12 @@ class FetchingController extends Controller
                        } else {
                            Log::info('Failed to download PDF.');
                        }
-
-                       $invoice_data->pdf = $path . 'invoice.pdf';
-
+                       
                        Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
                    } else {
                        Log::info('PDF already exists in storage. Skipping download.');
                    }
+                   $invoice_data->pdf = $path . 'invoice.pdf';
 
                }
                catch (\Exception $e) {
