@@ -311,16 +311,15 @@ class FetchingController extends Controller
                    } else {
                        Log::info('PDF already exists in storage. Skipping download.');
                    }
-                   $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
-
-                   $invoice_data->pdf = $path;
-
                }
                catch (\Exception $e) {
                    Log::error('Error fetching data from Qoyod API: ' . $e->getMessage());
    //                return $this->returnError( 422,'Failed to fetch invoice pdf from Qoyod API ' . $e->getMessage());
                }
                 $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
+                $path = 'invoices/pdf/' . $invoice->id . '/invoice.pdf';
+
+                $invoice->update(['pdf' => $path]);
 
                if ($invoice->wasRecentlyCreated)
                {
