@@ -109,7 +109,7 @@ class Customer extends Authenticatable implements JWTSubject
 
     public function getOverdueAttribute()
     {
-        $overdueInvoices = $this->invoices()->where('due_date', '<', now())->get();
+        $overdueInvoices = $this->invoices()->where('due_date', '<=', now())->get();
         $overdueAmount = $overdueInvoices->sum('total') - $overdueInvoices->sum('paid_amount');
 
         return $overdueAmount;
