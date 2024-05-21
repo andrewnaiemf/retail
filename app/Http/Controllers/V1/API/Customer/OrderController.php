@@ -88,22 +88,34 @@ class OrderController extends Controller
 
         $reference = $this->generateOrderReference();
         $order = $this->createOrder($customer, $reference, $orderData);
+        $this->createOrderItems($order, $modifiedLineItems);
+        $order_price = $order->orderItems->sum(function ($item) {
+            return $item->unit_price * $item->quantity;
+        });
+
         if ($request->use_loyalty == 1){
             $loyalty_discount = 0;
             $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'status'=> 'active'])->first();
             if ($loyalty){
                 if ($customer->points > 0 && $customer->points > $loyalty->points){
-                    $loyalty_discount = intdiv($customer->points , $loyalty->points) * $loyalty->discount_amount;
-                    $used_points = $customer->points - ($customer->points % $loyalty->points);
+                    $loyalty_discount = (int)(($customer->points / $loyalty->points) * $loyalty->discount_amount);
+                    $used_points = (int)$customer->points;
+
+                    if ($order_price && $order_price < $loyalty_discount){
+
+                        $aloyality_discount_remain = $loyalty_discount - $order_price;
+
+                        $used_points = (int)(($aloyality_discount_remain / $loyalty->discount_amount) * $loyalty->points);
+                        $loyalty_discount = $order_price;
+                    }
                 }
             }
             $order->update(['loyalty_discount' => $loyalty_discount, 'loyalty_points' => $used_points ?? $customer->points]);
         }
-        $this->createOrderItems($order, $modifiedLineItems);
 //        $this->reduceStock($modifiedLineItems);
         $message = "You have a new order from ".$customer->name;
         $admin_phone = User::first()->phone_number;
-        WhatsappNotification::sendWhatsAppMessage($message, $admin_phone);
+//        WhatsappNotification::sendWhatsAppMessage($message, $admin_phone);
 
         return response()->json(['message' => 'Order created successfully']);
     }
