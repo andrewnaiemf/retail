@@ -331,18 +331,26 @@ class FetchingController extends Controller
                if (!$exist_invoice && $invoice)
                {
                    $customer  = Customer::findOrFail($invoice->contact_id);
+//                   $message = 'عزيزي {{1}}
+//
+//تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
+//
+//كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
+//
+//{{4}}';
                    $message = 'عزيزي {{1}}
 
-تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
+تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س بتاريخ {{4}}
 
 كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
 
-{{4}}';
+{{5}}';
                    $app_link = $customer->is_android == 1 ? 'https://play.google.com/store/apps/details?id=com.DES.DESUserApp&hl=en&gl=US' : 'https://testflight.apple.com/join/S1akAZsV';
                    $message = str_replace('{{1}}', $customer->name, $message);
                    $message = str_replace('{{2}}', $invoice->reference, $message);
                    $message = str_replace('{{3}}', $invoice->total, $message);
-                   $message = str_replace('{{4}}', $app_link, $message);
+                   $message = str_replace('{{4}}', $invoice->issue_date, $message);
+                   $message = str_replace('{{5}}', $app_link, $message);
 
                    $customer_number = $customer->phone_number;
                    if (!$customer_number){
