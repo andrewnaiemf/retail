@@ -284,7 +284,6 @@ class FetchingController extends Controller
                }
 
                try {
-                   $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
 
                    if (!Storage::disk('public')->exists($path)) {
 
@@ -307,12 +306,14 @@ class FetchingController extends Controller
                        } else {
                            Log::info('Failed to download PDF.');
                        }
-                       
+
                        Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
                    } else {
                        Log::info('PDF already exists in storage. Skipping download.');
                    }
-                   $invoice_data->pdf = $path . 'invoice.pdf';
+                   $path = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
+
+                   $invoice_data->pdf = $path;
 
                }
                catch (\Exception $e) {
