@@ -22,6 +22,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class FetchingController extends Controller
 {
@@ -321,6 +322,11 @@ class FetchingController extends Controller
 
 
                 $invoice = Invoice::updateOrCreate(['id' => $invoice_data->id], (array)$invoice_data);
+                $secureUrl = '';
+                if ($invoice){
+                    $invoiceController = new \App\Http\Controllers\V1\API\Customer\InvoiceController();
+                    $secureUrl = $invoiceController->generateInvoiceUrl($invoice->id);
+                }
 
                if (!$invoice->pdf){
                    $path = 'invoices/pdf/' . $invoice->id . '/invoice.pdf';
@@ -331,26 +337,31 @@ class FetchingController extends Controller
                if (!$exist_invoice && $invoice)
                {
                    $customer  = Customer::findOrFail($invoice->contact_id);
+                   
 //                   $message = 'عزيزي {{1}}
 //
-//تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س
+//تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س بتاريخ {{4}}
 //
 //كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
 //
-//{{4}}';
+//{{5}}';
+
                    $message = 'عزيزي {{1}}
 
 تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س بتاريخ {{4}}
 
-كما يمكنك الاطلاع على جميع فواتيرك وخدمات اخرى من خلال تطبيق DES
+يمكنك تحميل الفاتورة من خلال الرابط
 
-{{5}}';
-                   $app_link = $customer->is_android == 1 ? 'https://play.google.com/store/apps/details?id=com.DES.DESUserApp&hl=en&gl=US' : 'https://testflight.apple.com/join/S1akAZsV';
+{{5}}
+
+تم إصدار الفاتورة بناء على طلبك وتعتبر نهائية و مستحقة السداد';
+
+//                   $app_link = $customer->is_android == 1 ? 'https://play.google.com/store/apps/details?id=com.DES.DESUserApp&hl=en&gl=US' : 'https://testflight.apple.com/join/S1akAZsV';
                    $message = str_replace('{{1}}', $customer->name, $message);
                    $message = str_replace('{{2}}', $invoice->reference, $message);
                    $message = str_replace('{{3}}', $invoice->total, $message);
                    $message = str_replace('{{4}}', $invoice->issue_date, $message);
-                   $message = str_replace('{{5}}', $app_link, $message);
+                   $message = str_replace('{{5}}', $secureUrl, $message);
 
                    $customer_number = $customer->phone_number;
                    if (!$customer_number){
@@ -445,12 +456,19 @@ class FetchingController extends Controller
                 {
                     $exist_receipt = Receipt::where(['reference' => $receiptse_data['reference']])->first();
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
+//
+//                    $this->saveReceiptAsPDF($receipt, $receiptse_data);
+//                    dd('a');
                     $customer = Customer::find($receipt->contact_id);
                     if (!$exist_receipt && $receipt) {
                         $this->addCustomerLoyalty($receipt->amount, $customer);
                         $this->sendWhatsappNotificationMessage($receipt, $customer);
                     }
                     $this->attachAllocates($receipt, $receiptse_data['allocations']);
+//
+//                    // Generate and save the PDF
+//                    $this->saveReceiptAsPDF($receipt, $receiptse_data);
+
                 }else{
                     /////// return error message you should fetch products recently added
                 }
@@ -464,6 +482,24 @@ class FetchingController extends Controller
            // Delete the receipt itself
            $receipt->delete();
        }
+    }
+
+    public function saveReceiptAsPDF($receipt, $receiptse_data)
+    {
+        $data = [
+            'receipt' => $receipt,
+            'receiptse_data' => $receiptse_data,
+        ];
+
+        // Load the view and pass the data to it
+        $pdf = Pdf::loadView('receipts.template', $data);
+
+        // Define the path
+        $path = 'receipts/pdf/' . $receipt->id . '/';
+        $filename = 'receipt.pdf';
+
+        // Save the PDF to the specified path
+        Storage::disk('public')->put($path . $filename, $pdf->output());
     }
 
     protected function addCustomerLoyalty($amount, $customer)

@@ -67,6 +67,7 @@ return [
     'FCM_KEY' => env('FCM_KEY', null),
     'ADMIN_PHONE' => env('ADMIN_PHONE', null),
     'ADMIN_PASSWORD' => env('ADMIN_PASSWORD', null),
+    'INVOICE_SECRET_KEY' => env('INVOICE_KEY', null),
 
     /*
     |--------------------------------------------------------------------------

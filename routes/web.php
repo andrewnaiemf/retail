@@ -13,3 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('invoices/{id}/{hash}', [\App\Http\Controllers\V1\API\Customer\InvoiceController::class, 'serveInvoice']);
