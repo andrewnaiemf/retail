@@ -337,7 +337,7 @@ class FetchingController extends Controller
                if (!$exist_invoice && $invoice)
                {
                    $customer  = Customer::findOrFail($invoice->contact_id);
-                   
+
 //                   $message = 'عزيزي {{1}}
 //
 //تم إصدار فاتوره جديدة رقم {{2}} بقيمة {{3}} ر.س بتاريخ {{4}}
@@ -491,15 +491,14 @@ class FetchingController extends Controller
             'receiptse_data' => $receiptse_data,
         ];
 
-        // Load the view and pass the data to it
-        $pdf = Pdf::loadView('receipts.template', $data);
-
+        $html = view('receipts.template',$data)->toArabicHTML();
+        $pdf = PDF::loadHTML($html)->output();
         // Define the path
         $path = 'receipts/pdf/' . $receipt->id . '/';
         $filename = 'receipt.pdf';
 
         // Save the PDF to the specified path
-        Storage::disk('public')->put($path . $filename, $pdf->output());
+        Storage::disk('public')->put($path . $filename, $pdf);
     }
 
     protected function addCustomerLoyalty($amount, $customer)

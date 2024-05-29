@@ -1,0 +1,26 @@
+{
+    "notosansarabic": {
+        "normal": "notosansarabic_normal_3d230a0225fc681d839d09cb8690c7e3"
+    },
+    "cairo": {
+        "200": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_200_016e91f80693ea9a39f3f8b45871b529",
+        "300": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_300_adebfb94605daa8752959c1403988edc",
+        "normal": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_normal_040a14ebcb2e69e83169c84ef0a92e85",
+        "500": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_500_21457be9154c30da4f489b9d34583858",
+        "600": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_600_c4edbe142aaa1d274fb274a9a7754ee7",
+        "bold": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_bold_a802969112dc5002963c9b3638d30968",
+        "800": "\/var\/www\/html\/retail\/storage\/fonts\/cairo_800_346855acbaec7cc011e8311ff6179ca4",
+        "900": "cairo_900_6f19b0b0462c8d77af13d2d4d9663041"
+    },
+    "noto sans arabic": {
+        "100": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_100_7c1ebda0d2d8d180f35dc1aadb6cdea8",
+        "200": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_200_83e2d3e4e037f70c0490f1f24885a986",
+        "300": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_300_df9f9884a79aed4fc0aaf4817abb4668",
+        "normal": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_normal_cbbc132b215158e87b243201818e786b",
+        "500": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_500_1f476a206971f49e94d4d582657f1206",
+        "600": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_600_81e7264c7d084d97bdaa260f87843ed0",
+        "bold": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_bold_32a79b21bca9adfb7ddf551cfe0059a4",
+        "800": "\/var\/www\/html\/retail\/storage\/fonts\/noto_sans_arabic_800_36febd1872a5ad140ac55b1a882b4bb4",
+        "900": "noto_sans_arabic_900_512a8348e1db4c9a9548d6e33908db66"
+    }
+}

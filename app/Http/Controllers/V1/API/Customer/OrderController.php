@@ -95,22 +95,22 @@ class OrderController extends Controller
 
         if ($request->use_loyalty == 1){
             $loyalty_discount = 0;
-            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'status'=> 'active'])->first();
+            $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id ,'status'=> 'active'])->first();
             if ($loyalty){
                 if ($customer->points > 0 && $customer->points > $loyalty->points){
                     $loyalty_discount = (int)(($customer->points / $loyalty->points) * $loyalty->discount_amount);
-                    $used_points = (int)$customer->points;
-
-                    if ($order_price && $order_price < $loyalty_discount){
-
-                        $aloyality_discount_remain = $loyalty_discount - $order_price;
-
-                        $used_points = (int)(($aloyality_discount_remain / $loyalty->discount_amount) * $loyalty->points);
-                        $loyalty_discount = $order_price;
-                    }
+//                    $used_points = (int)$customer->points;
+//
+//                    if ($order_price && $order_price < $loyalty_discount){
+//
+//                        $aloyality_discount_remain = $loyalty_discount - $order_price;
+//
+//                        $used_points = (int)(($aloyality_discount_remain / $loyalty->discount_amount) * $loyalty->points);
+//                        $loyalty_discount = $order_price;
+//                    }
                 }
             }
-            $order->update(['loyalty_discount' => $loyalty_discount, 'loyalty_points' => $used_points ?? $customer->points]);
+            $order->update(['loyalty_discount' => $loyalty_discount, 'loyalty_points' => $loyalty_discount]);
         }
 //        $this->reduceStock($modifiedLineItems);
         $message = "You have a new order from ".$customer->name;
