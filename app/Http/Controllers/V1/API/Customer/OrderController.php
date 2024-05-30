@@ -97,8 +97,9 @@ class OrderController extends Controller
             $loyalty_discount = 0;
             $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id ,'status'=> 'active'])->first();
             if ($loyalty){
-                if ($customer->points > 0 && $customer->points > $loyalty->points){
-                    $loyalty_discount = (int)(($customer->points / $loyalty->points) * $loyalty->discount_amount);
+                if ($customer->points > 0 && $customer->points > $loyalty->points && $customer->points > $order_price){
+                    $loyalty_discount = $order_price;
+//                    $loyalty_discount = (int)(($customer->points / $loyalty->points) * $loyalty->discount_amount);
 //                    $used_points = (int)$customer->points;
 //
 //                    if ($order_price && $order_price < $loyalty_discount){
