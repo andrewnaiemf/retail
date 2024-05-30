@@ -456,18 +456,19 @@ class FetchingController extends Controller
                 {
                     $exist_receipt = Receipt::where(['reference' => $receiptse_data['reference']])->first();
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
-//
-//                    $this->saveReceiptAsPDF($receipt, $receiptse_data);
-//                    dd('a');
                     $customer = Customer::find($receipt->contact_id);
                     if (!$exist_receipt && $receipt) {
+                        $secureUrl = '';
+                        if ($receipt){
+                            $receiptController = new \App\Http\Controllers\V1\API\Customer\ReceiptController();
+                            $secureUrl = $receiptController->generateReceiptUrl($receipt->id);
+                        }
+                        $this->saveReceiptAsPDF($receipt, $receiptse_data, $account, $customer);
+
                         $this->addCustomerLoyalty($receipt->amount, $customer);
-                        $this->sendWhatsappNotificationMessage($receipt, $customer);
+                        $this->sendWhatsappNotificationMessage($receipt, $customer, $secureUrl);
                     }
                     $this->attachAllocates($receipt, $receiptse_data['allocations']);
-//
-//                    // Generate and save the PDF
-//                    $this->saveReceiptAsPDF($receipt, $receiptse_data);
 
                 }else{
                     /////// return error message you should fetch products recently added
@@ -484,21 +485,30 @@ class FetchingController extends Controller
        }
     }
 
-    public function saveReceiptAsPDF($receipt, $receiptse_data)
+    public function saveReceiptAsPDF($receipt, $receiptse_data, $account, $customer)
     {
-        $data = [
-            'receipt' => $receipt,
-            'receiptse_data' => $receiptse_data,
-        ];
+        $path = 'receipts/pdf/' . $receipt->id . '/receipt.pdf';
 
-        $html = view('receipts.template',$data)->toArabicHTML();
-        $pdf = PDF::loadHTML($html)->output();
-        // Define the path
-        $path = 'receipts/pdf/' . $receipt->id . '/';
-        $filename = 'receipt.pdf';
+        if (!Storage::disk('public')->exists($path)) {
+            $receipt['un_allocate_amount'] = $receipt->getUnAllocateAmountAttribute();
+            $receipt['allocated_amount'] = $receipt['amount'] -$receipt['un_allocate_amount'];
+            $data = [
+                'receipt' => $receipt,
+                'receiptse_data' => $receiptse_data,
+                'account' => $account,
+                'customer' => $customer,
+            ];
 
-        // Save the PDF to the specified path
-        Storage::disk('public')->put($path . $filename, $pdf);
+            $html = view('receipts.template',[ 'data'=> $data])->toArabicHTML();
+            $pdf = PDF::loadHTML($html)->output();
+
+            $path = 'receipts/pdf/' . $receipt->id . '/';
+            $filename = 'receipt.pdf';
+
+            // Save the PDF to the specified path
+            Storage::disk('public')->put($path . $filename, $pdf);
+        }
+
     }
 
     protected function addCustomerLoyalty($amount, $customer)
@@ -512,22 +522,27 @@ class FetchingController extends Controller
         }
     }
 
-    protected function sendWhatsappNotificationMessage($receipt, $customer)
+    protected function sendWhatsappNotificationMessage($receipt, $customer, $secureUrl)
     {
         $message = 'عزيزي {{1}}
 
-نشكرك على سداد مبلغ {{2}} ر.س بسند رقم {{3}} بتاريخ {{4}}';
+نشكرك على سداد مبلغ {{2}} ر.س بسند رقم {{3}} بتاريخ {{4}}
+
+يمكنك تحميل السند من خلال الرابط التالى
+
+{{5}}';
 
         $message = str_replace('{{1}}', $customer->name, $message);
         $message = str_replace('{{2}}', $receipt->amount, $message);
         $message = str_replace('{{3}}', $receipt->reference, $message);
         $message = str_replace('{{4}}', $receipt->date, $message);
-//dd($message);
+        $message = str_replace('{{5}}', $secureUrl, $message);
+
         $customer_number = $customer->phone_number;
-                        if (!$customer_number){
-        WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
-                        }
-                        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
+        if (!$customer_number){
+            WhatsappNotification::sendWhatsAppMessage($message, '+201274696869');
+        }
+        WhatsappNotification::sendWhatsAppMessage($message, $customer_number);
     }
 
     protected function attachAllocates($receipt, $allocations_data)

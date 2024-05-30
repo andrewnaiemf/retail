@@ -43,7 +43,7 @@ class InvoiceController extends Controller
 
         $filePath = "invoices/pdf/{$id}/invoice.pdf";
 
-        if (!Storage::disk('public')->exists($filePath)) {dd('a');
+        if (!Storage::disk('public')->exists($filePath)) {
             return response('File not found', Response::HTTP_NOT_FOUND);
         }
 

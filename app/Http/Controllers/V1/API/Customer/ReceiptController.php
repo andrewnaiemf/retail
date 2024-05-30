@@ -5,9 +5,16 @@ namespace App\Http\Controllers\V1\API\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Receipt;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Symfony\Component\HttpFoundation\Response;
 
 class ReceiptController extends Controller
 {
+    private function generateHash($receiptId) {
+        return hash('sha256', $receiptId . config('app.INVOICE_SECRET_KEY'));
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +41,28 @@ class ReceiptController extends Controller
     {
         //
     }
+        public function serveReceipt($id, $hash)
+    {
+        $expectedHash = $this->generateHash($id);
 
+        if ($hash !== $expectedHash) {
+            return response('Forbidden', Response::HTTP_FORBIDDEN);
+        }
+
+        $filePath = "receipts/pdf/{$id}/receipt.pdf";
+
+        if (!Storage::disk('public')->exists($filePath)) {
+            return response('File not found', Response::HTTP_NOT_FOUND);
+        }
+
+        return response()->file(Storage::disk('public')->path($filePath));
+    }
+
+    public function generateReceiptUrl($receiptId)
+    {
+        $hash = $this->generateHash($receiptId);
+        return URL::to("/receipts/{$receiptId}/{$hash}");
+    }
     /**
      * Store a newly created resource in storage.
      *
