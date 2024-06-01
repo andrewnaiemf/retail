@@ -76,11 +76,11 @@
             font-size: 16px;
         }
         .total td:first-child {
-            width: 50%;
+            width: 40%;
             padding-right: 10px;
         }
         .total td:last-child {
-            width: 50%;
+            width: 60%;
             background-color: #f1f1f1;
         }
         @media print {
@@ -179,13 +179,19 @@
         </tr>
         <tr class="heading">
             <td style="width: 25%;">التاريخ</td>
+            <td style="width: 25%;">المبلغ المستحق</td>
             <td style="width: 25%;">المبلغ المخصص</td>
             <td style="width: 25%;">المبلغ</td>
             <td style="width: 25%;"> المرجع</td>
         </tr>
         @foreach($data['receipt']['allocates'] as $allocate)
+            @php
+                $invoice = \App\Models\Invoice::find($allocate['allocatee'][0]['id']);
+            @endphp
             <tr class="item">
                 <td>{{$allocate['date']}}</td>
+                <td dir="rtl"><span>{{'ر.س'}}</span>  <span>{{$invoice['due_amount']}}</span></td>
+
                 <td dir="rtl"><span>{{'ر.س'}}</span>  <span>{{$allocate['amount']}}</span></td>
                 <td dir="rtl"> <span>{{'ر.س'}}</span>  <span>{{$allocate['allocatee'][0]['total']}}</span></td>
                 <td>{{$allocate['allocatee'][0]['reference']}}</td>
