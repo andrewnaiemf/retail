@@ -13,6 +13,7 @@ use App\Models\LineItem;
 use App\Models\LoyaltyPoint;
 use App\Models\Product;
 use App\Models\Receipt;
+use App\Models\ReceiptLoyalty;
 use App\Models\Role;
 use App\Models\ShippingAddress;
 use App\Models\UnitType;
@@ -457,6 +458,7 @@ class FetchingController extends Controller
                     $exist_receipt = Receipt::where(['reference' => $receiptse_data['reference']])->first();
                     $receipt = Receipt::updateOrCreate(['reference' => $receiptse_data['reference']], $receiptse_data);
                     $customer = Customer::find($receipt->contact_id);
+                    $this->attachAllocates($receipt, $receiptse_data['allocations']);
                     if (!$exist_receipt && $receipt) {
                         $secureUrl = '';
                         if ($receipt){
@@ -465,10 +467,9 @@ class FetchingController extends Controller
                         }
                         $this->saveReceiptAsPDF($receipt, $receiptse_data, $account, $customer);
 
-                        $this->addCustomerLoyalty($receipt->amount, $customer);
+                        $this->addCustomerLoyalty($receipt, $customer);
                         $this->sendWhatsappNotificationMessage($receipt, $customer, $secureUrl);
                     }
-                    $this->attachAllocates($receipt, $receiptse_data['allocations']);
 
                 }else{
                     /////// return error message you should fetch products recently added
@@ -487,6 +488,7 @@ class FetchingController extends Controller
 
     public function saveReceiptAsPDF($receipt, $receiptse_data, $account, $customer)
     {
+        $receipt = $receipt->load('allocates');
         $path = 'receipts/pdf/' . $receipt->id . '/receipt.pdf';
 
         if (!Storage::disk('public')->exists($path)) {
@@ -511,13 +513,19 @@ class FetchingController extends Controller
 
     }
 
-    protected function addCustomerLoyalty($amount, $customer)
+    protected function addCustomerLoyalty($receipt, $customer)
     {
         if ($customer->category_id){
             $loyalty  = LoyaltyPoint::where(['customer_type' => $customer->type, 'customer_category_id' => $customer->category_id, 'status'=> 'active'])->first();
             if(isset($loyalty) && isset($loyalty->points) && isset($loyalty->discount_amount)){
-                $new_points = intval(($amount * $loyalty->points) / $loyalty->discount_amount);
+                $new_points = intval(($receipt->amount * $loyalty->points) / $loyalty->discount_amount);
                 $customer->update(['points' => $new_points + $customer->points]);
+                ReceiptLoyalty::create([
+                    'receipt_id' => $receipt->id,
+                    'customer_id' => $customer->id,
+                    'points' => $new_points,
+                    'created_at' => now(), // This is optional if you're using the timestamps() method in migration
+                ]);
             }
         }
     }
@@ -563,6 +571,7 @@ class FetchingController extends Controller
                             $allocation_data = (array)$allocation_data;
                             Allocation::create($allocation_data);
                             $this->reuploadInvoicePdf($existInvoice);
+                            $this->reuploadRecieptPdf($receipt);
                         }else{
                             /////// return error message you should fetch products recently added.
                         }
@@ -607,6 +616,35 @@ class FetchingController extends Controller
             Log::info('Successfully fetched invoice pdf from Qoyod API: invoice pdf');
         } else {
             Log::info('PDF already exists in storage. Skipping download.');
+        }
+    }
+
+    protected function reuploadRecieptPdf($receipt)
+    {
+        $receipt = $receipt->load('allocates');
+        $path = 'receipts/pdf/' . $receipt->id . '/receipt.pdf';
+        $account = Account::find($receipt->account_id);
+        $customer = Customer::find($receipt->contact_id);
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+
+            $receipt['un_allocate_amount'] = $receipt->getUnAllocateAmountAttribute();
+            $receipt['allocated_amount'] = $receipt['amount'] -$receipt['un_allocate_amount'];
+            $data = [
+                'receipt' => $receipt,
+                'account' => $account,
+                'customer' => $customer,
+            ];
+
+            $html = view('receipts.template',[ 'data'=> $data])->toArabicHTML();
+            $pdf = PDF::loadHTML($html)->output();
+
+            $path = 'receipts/pdf/' . $receipt->id . '/';
+            $filename = 'receipt.pdf';
+
+            // Save the PDF to the specified path
+            Storage::disk('public')->put($path . $filename, $pdf);
         }
     }
 
