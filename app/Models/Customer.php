@@ -59,6 +59,14 @@ class Customer extends Authenticatable implements JWTSubject
         return $userArray;
     }
 
+    public function getPointsAttribute($value)
+    {
+        $have_points = ReceiptLoyalty::where('customer_id' ,$this->id)->sum('points');
+        $used_points = Order::where(['customer_id' => $this->id, 'status' => 'Approved'])->sum('loyalty_points');
+
+        return $have_points - $used_points;
+    }
+
     public function getDeviceTokenAttribute($value)
     {
         // Check if the value is already an array
