@@ -287,7 +287,7 @@ class FetchingController extends Controller
 
                try {
                     $fullPath = 'invoices/pdf/' . $invoice_data->id . '/invoice.pdf';
-                   if (!Storage::disk('public')->exists($fullPath)) {
+                   if (!Storage::disk('public')->exists($fullPath) && $invoice_data->reference != null) {
 
                        $response = Http::withHeaders([
                            'API-KEY' => $this->apiKey,
