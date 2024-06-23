@@ -71,7 +71,7 @@ class FetchDataAsAdmin extends Command
 
         $total_time_ms = round($total_time * 1000);
 //        dd($total_time_ms );
-        $this->info("Total time taken to fetch data: {$total_time_ms} milliseconds at ".time());
+        $this->info("Total time taken to fetch data: {$total_time_ms} milliseconds at ".now());
 
     }
 
