@@ -67,6 +67,8 @@ class FetchingController extends Controller
 
                 if ($responseData !== null) {
                     break;
+                }else{
+                    Log::info("Failed to retrieve invoice data");
                 }
 
                 $retryCount++;
