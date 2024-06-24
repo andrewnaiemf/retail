@@ -48,13 +48,36 @@ class FetchingController extends Controller
 //            if ($data == 'receipts'){
 //                $responseData = $this->updateReceipts();
 //            }else{
+//                $response = Http::withHeaders([
+//                    'API-KEY' => $this->apiKey,
+//                ])->get($this->baseUrl . $data);
+//
+//                $responseData = json_decode($response->body());
+
+            $retryLimit = 5;
+            $retryCount = 0;
+            $responseData = null;
+
+            do {
                 $response = Http::withHeaders([
                     'API-KEY' => $this->apiKey,
                 ])->get($this->baseUrl . $data);
 
                 $responseData = json_decode($response->body());
 
-                $this->storeData($data, $responseData->$data);
+                if ($responseData !== null) {
+                    break;
+                }
+
+                $retryCount++;
+            } while ($retryCount < $retryLimit);
+
+            if ($responseData === null) {
+                // Handle the failure after retries
+                Log::info("Failed to retrieve invoice data after $retryLimit retries.");
+            }
+
+            $this->storeData($data, $responseData->$data);
                 Log::info('Successfully fetched data from Qoyod API: ' . $data);
 //            }
 //            $response = Http::withHeaders([
